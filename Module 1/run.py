@@ -4,9 +4,17 @@ from flask import Flask, render_template
 app = Flask(__name__)
 
 # Bind route for root
-@app.route("/")
+@app.route('/')
 def home():
     return render_template('home.html')
 
-if __name__=='__run__':
+@app.route('/contact')
+def contact():
+    return "Contact info here."
+
+@app.route('/projects')
+def projects():
+    return "Project info here"
+
+if __name__=='__main__':
     app.run(host='0.0.0.0', port=8080)

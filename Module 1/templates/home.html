@@ -1,20 +1,26 @@
+<!DOCTYPE html>
 <html>
     <head>
         <title>About Me</title>
-        <link rel="stylesheet" src="{{url_for('static/css',filename='main.css')}}" />
+        <link rel="stylesheet" href="{{url_for('static',filename='css/main.css')}}" />
     </head>
     <body>
         <nav>
             <ul>
-                <li>About</li>
+                <li class="selected">About</li>
                 <li>Contact</li>
                 <li>Projects</li>
             </ul>
         </nav>
         <main>
-            <h1>Chris Carson (He/Him)</h1>
-            <h2>Analyst</h2>
-            <p><img src="{{url_for('static/img', filename='chris.jpg')}}" class="biopic">Bio information goes here. It will be an interesting and insightful read.</p>
+            <img src="{{url_for('static', filename='img/chris.jpg')}}" class="biopic"/>
+            <h2>Chris Carson (He/Him)</h2>
+            <h3>Intel Analyst</h3>
+            
+            <p>
+                Bio information goes here. It will be an interesting and insightful read.
+                
+            </p>
         </main>
         <footer>
             <p>Text by Chris Carson, 2026</p>

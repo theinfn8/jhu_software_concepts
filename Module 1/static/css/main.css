@@ -8,28 +8,53 @@ nav {
     background-color: #6ba099;
     color: black;
     text-align: right;
+    width: 100%;
 }
 
-nav ul li {
-    color: black;
+ul {
+    list-style-type: none;
+    padding: 0px;
+    margin: 0;
+    overflow: hidden;
+    background-color: #6ba099;
+}
+
+ul li {
+    float: right;
+    background-color: #6ba099;
+    padding: 10px;
+}
+
+ul li:hover {
+    background-color: #46877e;
 }
 
 .selected {
     background-color: #46877e;
-
 }
 
 .biopic {
     float: right;
-    width: 25%;
+}
+
+main {
+    max-width: 1024px;
 }
 
 footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
     width: 100%;
     font-weight: lighter;
     font-size: x-small;
     text-align: center;
     margin-top: 4rem;
+    background-color: #6ba099;
+}
+
+footer p {
+    background-color: #6ba099;
 }
 
 h2 {
