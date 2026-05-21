@@ -1,0 +1,48 @@
+* {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: White;
+    color: Black;
+}
+
+nav {
+    background-color: #6ba099;
+    color: black;
+    text-align: right;
+}
+
+nav ul li {
+    color: black;
+}
+
+.selected {
+    background-color: #46877e;
+
+}
+
+.biopic {
+    float: right;
+    width: 25%;
+}
+
+footer {
+    width: 100%;
+    font-weight: lighter;
+    font-size: x-small;
+    text-align: center;
+    margin-top: 4rem;
+}
+
+h2 {
+    font-weight: bold;
+    font-size: 2.5rem;
+}
+
+h3 {
+    font-weight: bold;
+    font-size: 2rem;
+}
+
+h4 {
+    font-weight: bold;
+    font-size: 1rem;
+}
