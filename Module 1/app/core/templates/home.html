@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+{% block menu %}
+                <li><a href="{{url_for('core.home')}}" class="selected">About</a></li>
+                <li><a href="{{url_for('core.contact')}}">Contact</a></li>
+                <li><a href="{{url_for('core.projects')}}">Projects</a></li>
+{% endblock %}
+{% block content %}
+    <img src="{{url_for('core.static', filename='img/chris.jpg')}}" class="biopic"/>
+    <h2>Chris Carson (He/Him)</h2>
+    <h3 class="subheading">Intel Analyst</h3>
+    
+    <p>
+        Chris is an intel analyst in the U.S. Air Force, getting ready to retire in a year. His career has run the gamut of experiences, but he has always loved computers, programming, and solving puzzles. All of which lend themselves well to finding data backed solutions to complex national level threat questions. Most of his time currently is spent creating training materials for the next generation of analysts to ensure skills continuity.
+    </p>
+        He currently lives near Ramstein Germany with his family where they spend a lot of time traveling to experience new places, foods, and cultures.
+    </p>
+{% endblock %}

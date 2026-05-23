@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>About Me</title>
+        <link rel="shortcut icon" href="{{url_for('core.static', filename='favicon.ico')}}"/>
+        <link rel="stylesheet" href="{{url_for('core.static',filename='css/main.css')}}" />
+    </head>
+    <body>
+        <nav>
+            <ul>
+                {% block menu %} {% endblock %}
+            </ul>
+        </nav>
+        <main>
+            {% block content %} {% endblock %}
+        </main>
+        <footer>
+            <p>Text by Chris Carson, 2026</p>
+            <p>EN.605.256, Johns Hopkins</p>
+        </footer>
+    </body>
+</html>
