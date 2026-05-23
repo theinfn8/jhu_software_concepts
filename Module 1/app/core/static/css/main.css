@@ -50,6 +50,11 @@ ul li a:hover {
     margin-top: 0px;
 }
 
+.closemargins {
+    margin: 0px;
+    padding: 0px;
+}
+
 .biopic {
     float: right;
 }
