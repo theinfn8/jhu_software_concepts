@@ -1,4 +1,7 @@
 import sys
 import scrape
+import clean
 
-scrape.scrape_data()
+data = list()
+
+data = scrape.scrape_data()
