@@ -1,0 +1,4 @@
+module_1/__pycache__/
+venv/
+models/
+postgre_docker/

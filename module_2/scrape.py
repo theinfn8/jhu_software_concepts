@@ -27,27 +27,39 @@ def _fetchPage(pageNum):
     response = http.request('GET', url)
     status = response.status
 
-    if status != 200:
-        if status == 400:
-            print("Bad Request on Base Page")
-        elif status == 404:
-            print("Base Page not found")
-        else:
-            print(f"An unexpected HTTP result was returned: {status}")
+    if status == 200:
+        return response.data, status
+    elif status == 500:
+        # Internal server error, lets wait a little bit and retry
+        time.sleep(5)
+        return _fetchPage(pageNum)
+    elif status == 400:
+        # Bad request, exit
+        print("Bad Request on Base Page")
         sys.exit(1)
-    return response.data
+    elif status == 404:
+        # Exit if no page found
+        print("Base Page not found")
+        sys.exit(1)
+    else:
+        print(f"An unexpected HTTP result was returned: {status}")
+        sys.exit(1)
+    
 
 def scrape_data():
     
-    # 30,000 entries at 20 Entries per page is 1500 pages
-    numPagesToRead = 1
+    # 50,000 entries at 20 Entries per page is 2500 pages
+    numPagesToRead = 2500
     #currentPage = 1
 
     cleanData = list()
     sourceData = list()
 
     for page in range(1, numPagesToRead+1):
-        parsedPage = BeautifulSoup(_fetchPage(page), "html.parser")
+        start = time.time()
+        content, status = _fetchPage(page)
+        parsedPage = BeautifulSoup(content, "html.parser")
+        print(f"Page returned status: {status}")
 
         tableBody = parsedPage.find("tbody")
         tableRows = tableBody.find_all("tr")
@@ -59,7 +71,9 @@ def scrape_data():
         pageSource["html"] = str(tableBody)
         sourceData.append(pageSource)
 
-        print(f"Completed Page: {page}")
+        end = time.time()
+        timeDif = end - start
+        print(f"Completed Page: {page}, Parse Time: {timeDif}s")
 
     clean.save_data(cleanData, "applicant_data.json")
     clean.save_data(sourceData, "source_html.json")

@@ -26,9 +26,9 @@ MODEL_FILE = os.getenv(
     "tinyllama-1.1b-chat-v1.0.Q4_K_M.gguf",
 )
 
-N_THREADS = int(os.getenv("N_THREADS", str(os.cpu_count() or 2)))
+N_THREADS = int(os.getenv("N_THREADS", "4"))
 N_CTX = int(os.getenv("N_CTX", "2048"))
-N_GPU_LAYERS = int(os.getenv("N_GPU_LAYERS", "0"))  # 0 → CPU-only
+N_GPU_LAYERS = int(os.getenv("N_GPU_LAYERS", "32"))  # 0 → CPU-only
 
 CANON_UNIS_PATH = os.getenv("CANON_UNIS_PATH", "canon_universities.txt")
 CANON_PROGS_PATH = os.getenv("CANON_PROGS_PATH", "canon_programs.txt")
