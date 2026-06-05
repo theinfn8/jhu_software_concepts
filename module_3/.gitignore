@@ -1,0 +1,4 @@
+venv/
+sql/
+__pycache/
+postgre_docker/db-data/
