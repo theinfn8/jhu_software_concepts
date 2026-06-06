@@ -79,13 +79,25 @@ insertSQL = """
     VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
 """
 
-try:
-    with psycopg.connect(**config) as conn:
-        with conn.cursor() as cur:
-            cur.execute(createTableSQL)
-            conn.commit()
-            cur.executemany(insertSQL, _createTuplesList(_loadData()))
-            conn.commit()
-            
-except Exception as e:
-    print(f"Error: {e}")
+def insertEntries(scrapedData):
+    try:
+        with psycopg.connect(**config) as conn:
+            with conn.cursor() as cur:
+                cur.executemany(insertSQL, _createTuplesList(scrapedData))
+                conn.commit()
+    finally:
+        conn.close()
+
+if __name__=='__main__':
+    try:
+        with psycopg.connect(**config) as conn:
+            with conn.cursor() as cur:
+                cur.execute(createTableSQL)
+                conn.commit()
+                cur.executemany(insertSQL, _createTuplesList(_loadData()))
+                conn.commit()
+                
+    except Exception as e:
+        print(f"Error: {e}")
+    finally:
+        conn.close()

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<head>
+    <title>Database Queries</title>
+    <link rel="shortcut icon" href="{{url_for('static', filename='favicon.ico')}}"/>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/main.css')}}" />
+    <script src="{{url_for('static',filename='js/update.js')}}"></script>
+
+</head>
+<body onload="updateAnalysis()">
+    <nav><h2>Grad School Cafe Data Analysis</h2></nav>
+    <main>
+        <div class="rightside"><p>Use the Pull Data button to pull an update from Grad Cafe.</p></div>
+        <div class="rightside"><p id="status"></p></div>
+        <div class="rightside"><button onclick="updateAnalysis()">Update Analysis</button><button onclick="updateData()">Pull Data</button></div>
+        <h3>Analysis</h3>
+        <div id="analysis">
+        {% block analysis %} {% endblock %}
+        </div>
+        
+    </main>
+    <footer>
+        <p>Text by Chris Carson, 2026</p>
+        <p>EN.605.256, Johns Hopkins</p>
+    </footer>
+</body>

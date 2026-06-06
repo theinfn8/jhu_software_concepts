@@ -2,12 +2,14 @@ from flask import Flask, render_template
 import psycopg
 import query_data
 from config import config
+from scrape import scrape_data
+from load_data import insertEntries
+import time
 
 app = Flask(__name__, static_folder="static", template_folder="templates")
 updating = False
 
-@app.route('/')
-def home():
+def getAnalysisHTML():
     with psycopg.connect(**config) as conn:
         q1Answer = query_data.getTermCount(conn)[0]
         q2Answer = query_data.getInternationalAverage(conn)[0]
@@ -21,26 +23,96 @@ def home():
         q9Answer = query_data.getLLMUniversityListAcceptances(conn)[0]
         q10Answer = query_data.getBadGREAWScores(conn)[0]
         q11Answer = query_data.getBadGREScores(conn)[0]
-    return render_template("index.html",
-                           q1Answer=q1Answer,
-                           q2Answer=q2Answer,
-                           q3Answer=q3Answer,
-                           q4Answer=q4Answer,
-                           q5Answer=q5Answer,
-                           q6Answer=q6Answer,
-                           q7Answer=q7Answer,
-                           q8Answer=q8Answer,
-                           q9Answer=q9Answer,
-                           q10Answer=q10Answer,
-                           q11Answer=q11Answer)
+
+    return f"""<ul>
+            <li>
+                <h4>1. How many entries do you have in your database who have applied for Fall 2026?</h4>
+                <p class="smalltext">Answer: {q1Answer}</p>
+            </li>
+            <li>
+                <h4>2. What percentage of entries are from international students (not American or Other) (to two decimal places)?</h4>
+                <p class="smalltext">Answer: {q2Answer}</p>
+            </li>
+            <li>
+                <h4>3. What is the average GPA, GRE, GRE V, GRE AW of applicants who provide these metrics?</h4>
+                <p class="smalltext">Answer: {q3Answer}</p>
+            </li>
+            <li>
+                <h4>4. What is their average GPA of American students in Fall 2026?</h4>
+                <p class="smalltext">Answer: {q4Answer}</p>
+            </li>
+            <li>
+                <h4>5. What percent of entries for Fall 2026 are Acceptances (to two decimal places)?</h4>
+                <p class="smalltext">Answer: {q5Answer}</p>
+            </li>
+            <li>
+                <h4>6. What is the average GPA of applicants who applied for Fall 2026 who are Acceptances?</h4>
+                <p class="smalltext">Answer: {q6Answer}</p>
+            </li>
+            <li>
+                <h4>7. How many entries are from applicants who applied to JHU for a masters degrees in Computer Science?</h4>
+                <p class="smalltext">Answer: {q7Answer}</p>
+            </li>
+            <li>
+                <h4>8. How many entries from 2026 are acceptances from applicants who applied to Georgetown University, MIT, Stanford University, or Carnegie Mellon University for a PhD in Computer Science?</h4>
+                <p class="smalltext">Answer: {q8Answer}</p>
+            </li>
+            <li>
+                <h4>9. Do you numbers for question 8 change if you use LLM Generated Fields (rather than your downloaded fields)?</h4>
+                <p class="smalltext">Answer: {q9Answer}</p>
+            </li>
+            <li>
+                <h4>10. How many GRE AW scores reported exceeded the maximum score attainable?</h4>
+                <p class="smalltext">Answer: {q10Answer}</p>
+            </li>
+            <li>
+                <h4>11. How many GRE scores reported exceeded the maximum score attainable?</h4>
+                <p class="smalltext">Answer: {q11Answer}</p>
+            </li>
+        </ul>"""
+
+@app.route('/')
+def home():
+    analysisHTML = getAnalysisHTML()
+    return render_template("base.html")
 
 @app.route('/api/entries', methods=['GET'])
 def updateDatabase():
+    global updating
     if updating:
         return {"status": "Updating"}
     
     updating = True
     
+    lastIDFetched = 1
+    with psycopg.connect(**config) as conn:
+        with conn.cursor() as cur:
+            cur.execute("SELECT MAX(p_id) FROM applicants")
+            lastIDFetched = cur.fetchone()[0]
+    conn.close()
+    
+    scrapedData = scrape_data(lastIDFetched)
+    if scrapedData == None:
+        updating = False
+    else:
+        insertEntries(scrapedData)
+        updating = False
+
+    updating = False
+    return {"status": "Available",
+            "maxID": f"{scrapedData[0]["id"]}"}
+
+@app.route('/api/analysis', methods=['GET'])
+def updateAnalysis():
+    global updating
+
+    if updating:
+        return {"status": "Updating"}
+
+    returnHTML = getAnalysisHTML()
+    
+    return {"status": "Available",
+            "content": returnHTML}
 
 if __name__=='__main__':
     app.run(host='0.0.0.0', port=8080)

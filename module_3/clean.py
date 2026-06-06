@@ -26,7 +26,9 @@ cols = [
         "gpa",
         "gre",
         "grev",
-        "greaw"
+        "greaw",
+        "llm_generated_program",
+        "llm_generated_university"
 ]
 
 def _newRecord():
@@ -101,7 +103,7 @@ def _processSecondaryRow(tr, tempDict):
             if parsedBox[1] == 'AW':
                 tempDict["greaw"] = parsedBox[2]
 
-def clean_data(tableRows):
+def clean_data(tableRows, lastIDFetched):
     data = list()
 
     i = 0
@@ -125,6 +127,13 @@ def clean_data(tableRows):
             tempDict["comments"] = p.text
             i += 1
 
+        if tempDict['id'] == lastIDFetched:
+            if len(data) == 0:
+                return None
+            else:
+                return data
+        
+        
         data.append(tempDict)
         
         entryCount += 1

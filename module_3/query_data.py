@@ -170,45 +170,46 @@ def getBadGREScores(conn):
             row = cur.fetchone()
             return row
     
+if __name__=='__main__':
+    try:
+        with psycopg.connect(**config) as conn:
+            # Q1
+            print('1. How many entries do you have in your database who have applied for Fall 2026?')
+            print(getTermCount(conn)[0])
+            # Q2
+            print('2. What percentage of entries are from international students (not American or Other) (to two decimal places)?')
+            print(getInternationalAverage(conn)[0])
+            # Q3
+            print('3. What is the average GPA, GRE, GRE V, GRE AW of applicants who provide these metrics?')
+            averages = getAverageScores(conn)
+            print(f"GPA: {averages[0]}, GRE: {averages[1]}, GRE V: {averages[2]}, GRE AW: {averages[3]}")
+            # Q4
+            print('4. What is their average GPA of American students in Fall 2026?')
+            print(getAmericanGPA(conn)[0])
+            # Q5
+            print('5. What percent of entries for Fall 2026 are Acceptances (to two decimal places)?')
+            print(getFallAcceptancesPercent(conn)[0])
+            # Q6
+            print('6. What is the average GPA of applicants who applied for Fall 2026 who are Acceptances?')
+            print(getFallAcceptancesGPA(conn)[0])
+            # Q7
+            print('7. How many entries are from applicants who applied to JHU for a masters degrees in Computer Science?')
+            print(getJHUCSEntries(conn)[0])
+            # Q8
+            print('8. How many entries from 2026 are acceptances from applicants who applied to Georgetown University, MIT, Stanford University, or Carnegie Mellon University for a PhD in Computer Science?')
+            print(getUniversityListAcceptances(conn)[0])
+            # Q9
+            print('9. Do you numbers for question 8 change if you use LLM Generated Fields (rather than your downloaded fields)?')
+            print(getLLMUniversityListAcceptances(conn)[0])
+            # Q10
+            print('10. How many GRE AW scores reported exceeded the maximum score attainable?')
+            print(getBadGREAWScores(conn)[0])
+            # Q11
+            print('11. How many GRE scores reported exceeded the maximum score attainable?')
+            print(getBadGREScores(conn)[0])
 
-try:
-    with psycopg.connect(**config) as conn:
-        # Q1
-        print('1. How many entries do you have in your database who have applied for Fall 2026?')
-        print(getTermCount(conn)[0])
-        # Q2
-        print('2. What percentage of entries are from international students (not American or Other) (to two decimal places)?')
-        print(getInternationalAverage(conn)[0])
-        # Q3
-        print('3. What is the average GPA, GRE, GRE V, GRE AW of applicants who provide these metrics?')
-        print(getAverageScores(conn))
-        # Q4
-        print('4. What is their average GPA of American students in Fall 2026?')
-        print(getAmericanGPA(conn)[0])
-        # Q5
-        print('5. What percent of entries for Fall 2026 are Acceptances (to two decimal places)?')
-        print(getFallAcceptancesPercent(conn)[0])
-        # Q6
-        print('6. What is the average GPA of applicants who applied for Fall 2026 who are Acceptances?')
-        print(getFallAcceptancesGPA(conn)[0])
-        # Q7
-        print('7. How many entries are from applicants who applied to JHU for a masters degrees in Computer Science?')
-        print(getJHUCSEntries(conn)[0])
-        # Q8
-        print('8. How many entries from 2026 are acceptances from applicants who applied to Georgetown University, MIT, Stanford University, or Carnegie Mellon University for a PhD in Computer Science?')
-        print(getUniversityListAcceptances(conn)[0])
-        # Q9
-        print('9. Do you numbers for question 8 change if you use LLM Generated Fields (rather than your downloaded fields)?')
-        print(getLLMUniversityListAcceptances(conn)[0])
-        # Q10
-        print('10. How many GRE AW scores reported exceeded the maximum score attainable?')
-        print(getBadGREAWScores(conn)[0])
-        # Q11
-        print('11. How many GRE scores reported exceeded the maximum score attainable?')
-        print(getBadGREScores(conn)[0])
+    except Exception as e:
+        print(f"Error: {e}")
 
-except Exception as e:
-    print(f"Error: {e}")
-
-finally:
-    conn.close
+    finally:
+        conn.close
