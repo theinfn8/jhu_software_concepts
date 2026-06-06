@@ -13,7 +13,7 @@ async function updateData()
         
         const result = await response.json();
         console.log(result);
-        if (result.status = "Available")
+        if (result.status == "Available")
         {
             document.getElementById("status").innerText = "Update is available";
         }

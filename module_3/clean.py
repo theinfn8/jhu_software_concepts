@@ -27,8 +27,8 @@ cols = [
         "gre",
         "grev",
         "greaw",
-        "llm_generated_program",
-        "llm_generated_university"
+        "llm-generated-program",
+        "llm-generated-university"
 ]
 
 def _newRecord():

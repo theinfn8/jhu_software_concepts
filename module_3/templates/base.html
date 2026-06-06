@@ -9,9 +9,9 @@
 <body onload="updateAnalysis()">
     <nav><h2>Grad School Cafe Data Analysis</h2></nav>
     <main>
-        <div class="rightside"><p>Use the Pull Data button to pull an update from Grad Cafe.</p></div>
         <div class="rightside"><p id="status"></p></div>
         <div class="rightside"><button onclick="updateAnalysis()">Update Analysis</button><button onclick="updateData()">Pull Data</button></div>
+        <div class="descriptiontext"><p>Use the Pull Data button to pull an update from Grad Cafe. Update Analysis updates the statistics below.</p></div>
         <h3>Analysis</h3>
         <div id="analysis">
         {% block analysis %} {% endblock %}

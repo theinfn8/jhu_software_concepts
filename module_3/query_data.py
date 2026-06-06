@@ -28,13 +28,13 @@ SELECT
     (SELECT AVG(gpa) FROM applicants WHERE gpa > 0) AS avg_gpa,
     (SELECT AVG(gre) FROM applicants WHERE gre > 0) AS avg_gre,
     (SELECT AVG(gre_v) FROM applicants WHERE gre_v > 0) AS avg_gre_v,
-    (SELECT AVG(gre_aw) FROM applicants WHERE gre_aw >= 0) AS avg_gre_aw
+    (SELECT AVG(gre_aw) FROM applicants WHERE gre_aw >= 0) AS avg_gre_aw;
 """
 
 averageAmericanGPASQL = """
 SELECT AVG(gpa)
     FROM applicants
-    WHERE us_or_international = 'American' AND gpa > 0
+    WHERE us_or_international = 'American' AND gpa > 0;
 """
 
 percentAcceptedSQL = """
@@ -102,70 +102,70 @@ def getTermCount(conn):
 
 def getInternationalAverage(conn):
     with conn.cursor() as cur:
-            # Q1
+            # Q2
             cur.execute(percentageInternationalSQL)
             row = cur.fetchone()
             return row
 
 def getAverageScores(conn):
     with conn.cursor() as cur:
-            # Q1
+            # Q3
             cur.execute(averageScoresSQL)
             row = cur.fetchone()
             return row
 
 def getAmericanGPA(conn):
     with conn.cursor() as cur:
-            # Q1
+            # Q4
             cur.execute(averageAmericanGPASQL)
             row = cur.fetchone()
             return row
 
 def getFallAcceptancesPercent(conn):
     with conn.cursor() as cur:
-            # Q1
+            # Q5
             cur.execute(percentAcceptedSQL)
             row = cur.fetchone()
             return row
 
 def getFallAcceptancesGPA(conn):
     with conn.cursor() as cur:
-            # Q1
+            # Q6
             cur.execute(averageGPAFallAcceptanceSQL)
             row = cur.fetchone()
             return row
 
 def getJHUCSEntries(conn):
     with conn.cursor() as cur:
-            # Q1
+            # Q7
             cur.execute(jhuApplicantsSQL)
             row = cur.fetchone()
             return row
 
 def getUniversityListAcceptances(conn):
     with conn.cursor() as cur:
-            # Q1
+            # Q8
             cur.execute(universityListAcceptancesSQL)
             row = cur.fetchone()
             return row
 
 def getLLMUniversityListAcceptances(conn):
     with conn.cursor() as cur:
-            # Q1
+            # Q9
             cur.execute(llmUniversityListAcceptancesSQL)
             row = cur.fetchone()
             return row
 
 def getBadGREAWScores(conn):
     with conn.cursor() as cur:
-            # Q1
+            # Q10
             cur.execute(badGREAWScoresSQL)
             row = cur.fetchone()
             return row
     
 def getBadGREScores(conn):
     with conn.cursor() as cur:
-            # Q1
+            # Q11
             cur.execute(badGREScoresSQL)
             row = cur.fetchone()
             return row

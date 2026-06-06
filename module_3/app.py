@@ -4,7 +4,6 @@ import query_data
 from config import config
 from scrape import scrape_data
 from load_data import insertEntries
-import time
 
 app = Flask(__name__, static_folder="static", template_folder="templates")
 updating = False
@@ -73,12 +72,12 @@ def getAnalysisHTML():
 
 @app.route('/')
 def home():
-    analysisHTML = getAnalysisHTML()
     return render_template("base.html")
 
 @app.route('/api/entries', methods=['GET'])
 def updateDatabase():
     global updating
+    # If updating, send blocking response
     if updating:
         return {"status": "Updating"}
     
@@ -88,27 +87,30 @@ def updateDatabase():
     with psycopg.connect(**config) as conn:
         with conn.cursor() as cur:
             cur.execute("SELECT MAX(p_id) FROM applicants")
-            lastIDFetched = cur.fetchone()[0]
+            lastIDFetched = cur.fetchone()[0] # Mark where we left off last time
     conn.close()
     
     scrapedData = scrape_data(lastIDFetched)
-    if scrapedData == None:
-        updating = False
-    else:
-        insertEntries(scrapedData)
-        updating = False
+    
+    # If there were new entries, update the database, update the last ID (which should be the first item in the list)
+    if scrapedData != None:
+        if len(scrapedData) > 0:
+            insertEntries(scrapedData)
+            lastIDFetched = scrapedData[0]["id"]
 
     updating = False
     return {"status": "Available",
-            "maxID": f"{scrapedData[0]["id"]}"}
+            "maxID": f"{lastIDFetched}"}
 
 @app.route('/api/analysis', methods=['GET'])
 def updateAnalysis():
     global updating
 
+    # If updating the database, send blocking response
     if updating:
         return {"status": "Updating"}
 
+    # Else, build the HTML and send it out
     returnHTML = getAnalysisHTML()
     
     return {"status": "Available",
