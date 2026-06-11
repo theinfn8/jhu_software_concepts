@@ -1,0 +1,7 @@
+psycopg[binary]
+python-dotenv
+flask
+beautifulsoup4
+urllib3
+pytest
+pytest-cov
