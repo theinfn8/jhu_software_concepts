@@ -30,4 +30,4 @@ Approach: The assignment required some changes to the code to match the requirem
     server.
 
     Next I moved to using an LLM to generate the Sphinx entries, checking for incorrect information
-    and making corrections as needed.
+    and making corrections as needed. Finally I added the github action for automating testing.
