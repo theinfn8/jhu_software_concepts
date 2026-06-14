@@ -3,10 +3,6 @@ import psycopg
 from src.config import config
 from datetime import datetime
 
-def _loadData():
-    with open("llm_generated_applicant_data.json", 'r') as f:
-        return json.load(f)
-
 def _createTuplesList(scrapedData):
     insertData = list()
     # Create a list of tuples from the dictionaries to bulk insert
@@ -88,16 +84,3 @@ def insertEntries(scrapedData):
     finally:
         conn.close()
 
-if __name__=='__main__':
-    try:
-        with psycopg.connect(**config) as conn:
-            with conn.cursor() as cur:
-                cur.execute(createTableSQL)
-                conn.commit()
-                cur.executemany(insertSQL, _createTuplesList(_loadData()))
-                conn.commit()
-                
-    except Exception as e:
-        print(f"Error: {e}")
-    finally:
-        conn.close()

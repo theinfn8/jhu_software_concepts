@@ -133,8 +133,8 @@ def clean_data(tableRows, lastIDFetched):
             else:
                 return data
         
-        
-        data.append(tempDict)
+        if tempDict['id'] != 'None':
+            data.append(tempDict)
         
         entryCount += 1
         
@@ -143,8 +143,4 @@ def clean_data(tableRows, lastIDFetched):
             i += 1
     
     return data
-        
 
-def save_data(entriesList, fileName):
-    with open(fileName, "w", encoding="utf-8") as f:
-        f.write(json.dumps(entriesList))

@@ -1,4 +1,3 @@
-import sys
 from urllib3 import PoolManager
 from bs4 import BeautifulSoup
 import json
@@ -15,9 +14,6 @@ sourceCols = [
         "page",
         "html"
     ]
-
-def _newSourceRecord():
-    return dict.fromkeys(sourceCols, "")
 
 def _fetchPage(pageNum):
     # Build in wait time for politeness
@@ -50,12 +46,9 @@ def _fetchPage(pageNum):
 
 def scrape_data(lastIDFetched):
     
-    # Setting this to something reasonably small since updates shouldn't be too large
-    numPagesToRead = 15
     currentPage = 1
 
     cleanData = list()
-    sourceData = list()
 
     fetchMoreEntries = True
 
