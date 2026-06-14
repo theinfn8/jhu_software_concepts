@@ -88,6 +88,7 @@ AND university LIKE ANY (ARRAY['%Georgetown University%','%Massachusetts Institu
 AND status = 'Accepted';
 """
 
+# Q9
 llmUniversityListAcceptancesSQL = """
 SELECT COUNT(p_id)
 FROM applicants
@@ -98,12 +99,14 @@ AND llm_generated_university LIKE ANY (ARRAY['%Georgetown University%','%Massach
 AND status = 'Accepted';
 """
 
+# Q10
 badGREAWScoresSQL = """
 SELECT COUNT(p_id)
 FROM applicants
 WHERE gre_aw > 6
 """
 
+# Q11
 badGREScoresSQL = """
 SELECT COUNT(p_id)
 FROM applicants
