@@ -6,3 +6,4 @@ urllib3
 pytest
 pytest-cov
 sphinx
+sphinx-rtd-theme
