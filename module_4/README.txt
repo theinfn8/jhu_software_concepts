@@ -4,7 +4,7 @@ Instructions: install python requirements from requirements.txt
     Make sure the postgreSQL database is running
     Create .env in src directory (excluded this time per assignment requirements)
     Create the server info in ./src/.env for the real server, and one in ./tests/.env for the
-    testing environment:
+    testing environment in the format of:
         host=localhost
         port=5432
         dbname=gradcafe
@@ -30,4 +30,7 @@ Approach: The assignment required some changes to the code to match the requirem
     server.
 
     Next I moved to using an LLM to generate the Sphinx entries, checking for incorrect information
-    and making corrections as needed. Finally I added the github action for automating testing.
+    and making corrections as needed. Finally I added the github action for automating testing. And
+    I found out I need to use environment variables for the database portion of the github action,
+    since I can't upload the .env. Unfortunately, I don't have time to make those changes this
+    week.
