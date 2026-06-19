@@ -104,7 +104,7 @@ def get_config():
         "host" : "localhost",
         "port" : "5432",
         "dbname" : "gradcafe",
-        "user" : "grad_user",
+        "user" : "grad_admin",
         "password" : "grad_admin_pass"
     }
     print(config)
