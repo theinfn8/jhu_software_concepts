@@ -8,6 +8,7 @@ the calling context.
 """
 
 import os
+from dotenv import load_dotenv
 
 def get_config(testconfig=None):
     """Retrieve database connection configuration from environment variables.
@@ -27,6 +28,8 @@ def get_config(testconfig=None):
         ``"password"``.
     :rtype: dict
     """
+
+    load_dotenv()
 
     if testconfig is None:
         config = {
