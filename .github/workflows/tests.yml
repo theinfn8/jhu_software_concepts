@@ -64,4 +64,4 @@ jobs:
     - name: Run pydeps if no .svg
       run: |
         cd module_5
-        if [! -f dependency.svg ] pydeps ./src/app.py --noshow -T svg -o dependency.svg
+        if [! -f dependency.svg ]; then pydeps ./src/app.py --noshow -T svg -o dependency.svg
