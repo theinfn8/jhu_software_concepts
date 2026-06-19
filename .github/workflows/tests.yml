@@ -20,11 +20,11 @@ jobs:
         postgres:
             image: postgres:16
             env:
-                POSTGRES_USER: ${{ secrets.TEST_DB_USER }}
-                POSTGRES_PASSWORD: ${{ secrets.TEST_DB_PASS }}
+                POSTGRES_USER: ${{ TEST_DB_USER }}
+                POSTGRES_PASSWORD: ${{ TEST_DB_PASS }}
                 POSTGRES_DB: gradcafe
             ports:
-                - 5430:5430
+                - 5432:5432
 
     steps:
     - uses: actions/checkout@v6
@@ -33,17 +33,6 @@ jobs:
       with:
         python-version: "3.10"
         cache: 'pip'
-      env:
-        TEST_DB_HOST: ${{ secrets.TEST_DB_USER }}
-        TEST_DP_PORT: ${{ secrets.TEST_DB_PORT }}
-        TEST_DB_NAME: ${{ secrets.TEST_DB_NAME }}
-        TEST_DB_USER: ${{ secrets.TEST_DB_USER }}
-        TEST_DB_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
-        DB_HOST: ${{ secrets.TEST_DB_USER }}
-        DP_PORT: ${{ secrets.TEST_DB_PORT }}
-        DB_NAME: ${{ secrets.TEST_DB_NAME }}
-        DB_USER: ${{ secrets.TEST_DB_USER }}
-        DB_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
     - name: Install dependencies
       run: |
         sudo systemctl start postgresql.service
@@ -51,12 +40,6 @@ jobs:
         pip install -r module_5/requirements.txt
 # if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Stage database
-      env:
-        TEST_DB_HOST: ${{ secrets.TEST_DB_USER }}
-        TEST_DP_PORT: ${{ secrets.TEST_DB_PORT }}
-        TEST_DB_NAME: ${{ secrets.TEST_DB_NAME }}
-        TEST_DB_USER: ${{ secrets.TEST_DB_USER }}
-        TEST_DB_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
       run: python ./scripts/test_setup.py
     - name: Lint with PyLint
       run: |
