@@ -596,7 +596,7 @@ metrics?""")
         # Q6
         print("""6. What is the average GPA of applicants who applied for Fall 2026 who are
 Acceptances?""")
-        print(get_fall_acceptance_gpa(conn[0]))
+        print(get_fall_acceptance_gpa(conn)[0])
         # Q7
         print("""7. How many entries are m applicants who applied to JHU for a masters degrees in
 Computer Science?""")
@@ -612,7 +612,7 @@ than your downloaded fields)?""")
         print(get_llm_uni_acceptances(conn)[0])
         # Q10
         print('10. How many GRE AW scores reported exceeded the maximum score attainable?')
-        print(get_bad_gre_aw_scores(conn[0]))
+        print(get_bad_gre_aw_scores(conn)[0])
         # Q11
         print('11. How many GRE scores reported exceeded the maximum score attainable?')
         print(get_bad_gre_scores(conn)[0])

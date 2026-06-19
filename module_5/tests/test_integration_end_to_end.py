@@ -1,13 +1,17 @@
 import pytest
 import psycopg
-from tests import test_config
+from src.config import get_config
 
 @pytest.mark.integration
-def test_update(client,pg_connection, mock_new_data, mock_old_data, monkeypatch):
-     
-    monkeypatch.setattr("src.config.config", test_config.config)
+def test_update(client,pg_connection, mock_new_data, monkeypatch):
+    
+    def get_config():
+        return pg_connection
+
+    monkeypatch.setattr("src.config.get_config", get_config())
     def mock_scrape(page):
         return mock_new_data
+
     monkeypatch.setattr("src.scrape.scrape_data", mock_scrape)
     try:
         response = client.post('/api/pull-data')

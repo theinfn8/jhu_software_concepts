@@ -1,4 +1,5 @@
 import pytest
+from threading import Lock
 from flask import Flask
 
 from src.app import create_app
@@ -13,7 +14,7 @@ def test_updateDatabase(client, pg_connection, disable_network_calls, monkeypatc
     def mock_insert(data):
         return None
     monkeypatch.setattr("src.scrape.scrape_data", mock_fetch)
-    monkeypatch.setattr("src.load_data.insertEntries", mock_insert)
+    monkeypatch.setattr("src.load_data.insert_entries", mock_insert)
     response = client.post('/api/pull-data')
     assert response.status_code == 200
 
@@ -24,12 +25,15 @@ def test_updateDatabase(client, pg_connection, disable_network_calls, monkeypatc
     response = client.post('/api/pull-data')
     assert response.status_code == 200
 
-    monkeypatch.setattr("src.routes.updating", True)
+    UPDATING_LOCK = Lock()
+    UPDATING_LOCK.acquire()
+    monkeypatch.setattr("src.routes.UPDATING_LOCK", UPDATING_LOCK)
     response2 = client.post('/api/pull-data')
     assert response2.status_code == 409
+    UPDATING_LOCK.release()
 
 @pytest.mark.buttons
-def test_updateAnalysis(client, pg_connection, monkeypatch):
+def test_update_analysis(client, pg_connection, monkeypatch):
 
     # Point to DB test server
     def test_server(**conf):
@@ -40,11 +44,9 @@ def test_updateAnalysis(client, pg_connection, monkeypatch):
     assert response.status_code == 200
     assert b"Answer:" in response.data
 
-    monkeypatch.setattr("src.routes.updating", True)
+    UPDATING_LOCK = Lock()
+    UPDATING_LOCK.acquire()
+    monkeypatch.setattr("src.routes.UPDATING_LOCK", UPDATING_LOCK)
     response = client.get('/api/analysis')
     assert response.status_code == 409
-
-
-
-    
-    
+    UPDATING_LOCK.release

@@ -1,33 +1,10 @@
 import pytest
 import requests
 import psycopg
-from tests.test_config import config
-import src.load_data as ld
-
+from src.config import get_config
 
 from src.app import create_app
 
-# Assumes new empty test server
-createTableSQL = """
-    CREATE TABLE IF NOT EXISTS applicants (
-    p_id integer PRIMARY KEY,
-    program text,
-    university text,
-    comments text,
-    date_added date,
-    url text,
-    status text,
-    term text,
-    us_or_international text,
-    gpa float,
-    gre float,
-    gre_v float,
-    gre_aw float,
-    degree text,
-    llm_generated_program text,
-    llm_generated_university text
-);
-"""
 initial_setup = [
     {"id": 1020268, "program": "Human Centered Design", "university": "Handong Global University", "comments": "None", "date_added": "May 26, 2026", "url": "https://www.thegradcafe.com/result/1020268", "status": "Accepted", "status_date": "May 26", "accepted": "None", "rejected": "None", "term": "Fall 2026", "US/International": "International", "degree": "Masters", "gpa": "3.09", "gre": "None", "grev": "None", "greaw": "None", "llm-generated-program": "Human Centered Design", "llm-generated-university": "Handong Global University"},
     {"id": 1020267, "program": "Kinesiology", "university": "University of Toronto", "comments": "None", "date_added": "May 26, 2026", "url": "https://www.thegradcafe.com/result/1020267", "status": "Rejected", "status_date": "May 22", "accepted": "None", "rejected": "May 22", "term": "Fall 2026", "US/International": "International", "degree": "Masters", "gpa": "None", "gre": "None", "grev": "None", "greaw": "None", "llm-generated-program": "Kinesiology", "llm-generated-university": "University of Toronto"},
@@ -51,17 +28,6 @@ initial_setup = [
     {"id": 1020249, "program": "Political Science", "university": "University of Houston", "comments": "None", "date_added": "May 23, 2026", "url": "https://www.thegradcafe.com/result/1020249", "status": "Accepted", "status_date": "Apr 24", "accepted": "None", "rejected": "None", "term": "Fall 2026", "US/International": "International", "degree": "PhD", "gpa": "None", "gre": "None", "grev": "None", "greaw": "None", "llm-generated-program": "Political Science", "llm-generated-university": "University of Houston"}
 ]
 
-try:
-    with psycopg.connect(**config) as conn:
-        with conn.cursor() as cur:
-            cur.execute("DROP TABLE IF EXISTS applicants")
-            cur.execute(createTableSQL)
-            conn.commit()
-            cur.executemany(ld.insertSQL, ld._createTuplesList(initial_setup))
-            conn.commit()
-except Exception as e:
-    print(f"Error: {e}")
-
 @pytest.fixture()
 def flask_app():
     flask_app = create_app()
@@ -84,7 +50,7 @@ def disable_network_calls(monkeypatch):
 
 @pytest.fixture()
 def pg_connection():
-    conn = psycopg.connect(**config)
+    conn = psycopg.connect(**get_config(testconfig=True))
     yield conn
 
 @pytest.fixture()

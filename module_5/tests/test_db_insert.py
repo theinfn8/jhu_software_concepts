@@ -17,7 +17,7 @@ def test_scrape_data(mock_web_return, monkeypatch):
         return mock_web_return, 200
     
     # Using last id in the list to test cutting the parse short when lastID is found
-    monkeypatch.setattr("src.scrape._fetchPage", mock_fetch)
+    monkeypatch.setattr("src.scrape._fetch_page", mock_fetch)
     data = sc.scrape_data(1020269)
     assert len(data) == 19
 
@@ -27,7 +27,7 @@ def test_scrape_data(mock_web_return, monkeypatch):
     #Check for bad fetch
     def mock_bad_404_fetch(page):
         return None, 404
-    monkeypatch.setattr("src.scrape._fetchPage", mock_bad_404_fetch)
+    monkeypatch.setattr("src.scrape._fetch_page", mock_bad_404_fetch)
     data = sc.scrape_data(1)
     assert data == None
 
@@ -48,27 +48,27 @@ def test_fetchPage(monkeypatch):
         return mock_response("Test", 500)
     
     monkeypatch.setattr("urllib3.PoolManager.request", return_200)
-    data, status = sc._fetchPage(1)
+    data, status = sc._fetch_page(1)
     assert status == 200
 
     monkeypatch.setattr("urllib3.PoolManager.request", return_400)
-    data, status = sc._fetchPage(1)
+    data, status = sc._fetch_page(1)
     assert status == 400
 
     monkeypatch.setattr("urllib3.PoolManager.request", return_404)
-    data, status = sc._fetchPage(1)
+    data, status = sc._fetch_page(1)
     assert status == 404
 
     monkeypatch.setattr("urllib3.PoolManager.request", return_500)
-    data, status = sc._fetchPage(1)
+    data, status = sc._fetch_page(1)
     assert status == 500
 
 @pytest.mark.db
-def test_insertEntries(pg_connection,monkeypatch):
+def test_insert_entries(pg_connection,monkeypatch):
     def test_server(**conf):
         return pg_connection
     monkeypatch.setattr("psycopg.connect", test_server)
-    ld.insertEntries(parse_return)
+    ld.insert_entries(parse_return)
 
 @pytest.mark.db
 def test_clean_data(mock_web_return):
