@@ -59,4 +59,4 @@ jobs:
     - name: Test with pytest
       run: |
         cd module_5
-        pytest --cov-report term-missing --cov=src tests/
+        pytest --cov-report term-missing --rootdir=./ --cov=src tests/
