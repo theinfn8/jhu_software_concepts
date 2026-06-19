@@ -53,13 +53,14 @@ jobs:
         TEST_DB_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
       run: |
         python ./scripts/test_setup.py
+        psql -u $DB_USER
     - name: Lint with PyLint
       run: |
         cd module_5
         pylint --fail-under=10 src
     - name: Test with pytest
       env:
-        DB_HOST: ${{ env.DB_HOST }}
+        DB_HOST: ${{ DB_HOST }}
         DB_PORT: ${{ env.DB_PORT }}
         DB_NAME: ${{ env.DB_NAME }}
         DB_USER: ${{ env.DB_USER }}
