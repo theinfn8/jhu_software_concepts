@@ -48,8 +48,7 @@ jobs:
       run: |
         sudo systemctl start postgresql.service
         python -m pip install --upgrade pip
-        cd module_5
-        pip install -r requirements.txt
+        pip install -r module_5/requirements.txt
 # if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Stage database
       run: python /scripts/test_setup.py
