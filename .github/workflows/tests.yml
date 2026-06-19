@@ -52,9 +52,12 @@ jobs:
         pip install -r requirements.txt
 # if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Stage database
-      run: python ../scripts/test_setup.py
+      run: python /scripts/test_setup.py
     - name: Lint with PyLint
-      run: pylint --fail-under=10 src
+      run: |
+        cd module_5
+        pylint --fail-under=10 src
     - name: Test with pytest
       run: |
+        cd module_5
         pytest --cov-report term-missing --cov=src tests/
