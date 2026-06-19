@@ -1,6 +1,7 @@
 from datetime import datetime
 import os
 import psycopg
+from dotenv import load_dotenv
 
 def _create_tuples_list(scraped_data):
     insert_data = []
@@ -98,12 +99,13 @@ initial_setup = [
 ]
 
 def get_config():
+    load_dotenv()
     config = {
-        "host" : os.environ.get("TEST_DB_HOST"),
-        "port" : os.environ.get("TEST_DB_PORT"),
-        "dbname" : os.environ.get("TEST_DB_NAME"),
-        "user" : os.environ.get("TEST_DB_USER"),
-        "password" : os.environ.get("TEST_DB_PASSWORD")
+        "host" : os.getenviron("TEST_DB_HOST"),
+        "port" : os.getenviron("TEST_DB_PORT"),
+        "dbname" : os.getenviron("TEST_DB_NAME"),
+        "user" : os.getenviron("TEST_DB_USER"),
+        "password" : os.getenviron("TEST_DB_PASSWORD")
     }
 
     return config
