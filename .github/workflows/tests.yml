@@ -20,9 +20,9 @@ jobs:
         postgres:
             image: postgres:16
             env:
-                POSTGRES_USER: grad_admin
-                POSTGRES_PASSWORD: grad_admin_pass
-                POSTGRES_DB: gradcafe
+                POSTGRES_USER: ${{ TEST_DB_USER }}
+                POSTGRES_PASSWORD: ${{ TEST_DB_PASSWORD}}
+                POSTGRES_DB: ${{ TEST_DB_NAME }}
             ports:
                 - 5432:5432
 
