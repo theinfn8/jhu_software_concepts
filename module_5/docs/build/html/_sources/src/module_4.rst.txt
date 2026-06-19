@@ -1,0 +1,7 @@
+Module 4
+===========
+
+.. autodoc:: src
+    :members:
+    :undoc-members:
+    :recursive:
