@@ -1,7 +1,6 @@
 from datetime import datetime
 import os
 import psycopg
-from config import get_config
 
 def _create_tuples_list(scraped_data):
     insert_data = []
