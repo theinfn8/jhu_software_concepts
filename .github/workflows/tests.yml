@@ -60,7 +60,7 @@ jobs:
         pylint --fail-under=10 src
     - name: Test with pytest
       env:
-        DB_HOST: ${{ DB_HOST }}
+        DB_HOST: ${{ env.DB_HOST }}
         DB_PORT: ${{ env.DB_PORT }}
         DB_NAME: ${{ env.DB_NAME }}
         DB_USER: ${{ env.DB_USER }}
@@ -71,5 +71,6 @@ jobs:
         TEST_DB_USER: ${{ secrets.TEST_DB_USER }}
         TEST_DB_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
       run: |
+        env
         cd module_5
         pytest --cov-report term-missing --rootdir=./ --cov=./src tests/
