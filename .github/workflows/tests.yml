@@ -51,4 +51,4 @@ jobs:
       env:
         TEST_DB_HOST: postgresql://test:grad_user@localhost:5430/gradcafe
       run: |
-        pytest --cov-report term-missing --cov=src tests/
+        pytest --cov-report term-missing --cov=module_5/src module_5/tests/
