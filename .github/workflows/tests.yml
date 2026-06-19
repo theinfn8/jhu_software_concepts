@@ -39,16 +39,22 @@ jobs:
         TEST_DB_NAME: ${{ secrets.TEST_DB_NAME }}
         TEST_DB_USER: ${{ secrets.TEST_DB_USER }}
         TEST_DB_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
+        DB_HOST: ${{ secrets.TEST_DB_USER }}
+        DP_PORT: ${{ secrets.TEST_DB_PORT }}
+        DB_NAME: ${{ secrets.TEST_DB_NAME }}
+        DB_USER: ${{ secrets.TEST_DB_USER }}
+        DB_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
     - name: Install dependencies
       run: |
         sudo systemctl start postgresql.service
         python -m pip install --upgrade pip
-        pip install -r module_5/requirements.txt
+        cd module_5
+        pip install -r requirements.txt
 # if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Stage database
-      run: python scripts/test_setup.py
+      run: python ../scripts/test_setup.py
+    - name: Lint with PyLint
+      run: pylint --fail-under=10 src
     - name: Test with pytest
-      env:
-        TEST_DB_HOST: postgresql://test:grad_user@localhost:5430/gradcafe
       run: |
-        pytest --cov-report term-missing --cov=module_5/src module_5/tests/
+        pytest --cov-report term-missing --cov=src tests/
