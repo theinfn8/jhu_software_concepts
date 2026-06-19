@@ -101,11 +101,11 @@ initial_setup = [
 def get_config():
     load_dotenv()
     config = {
-        "host" : "localhost",
-        "port" : "5432",
-        "dbname" : "gradcafe",
-        "user" : "grad_admin",
-        "password" : "grad_admin_pass"
+        "host" : os.getenv("DB_HOST"),
+        "port" : os.getenv("DB_PORT"),
+        "dbname" : os.getenv("DB_NAME"),
+        "user" : os.getenv("DB_USER"),
+        "password" : os.getenv("DB_PASSWORD")
     }
     print(config)
     return config
