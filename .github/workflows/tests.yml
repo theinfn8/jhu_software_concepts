@@ -5,9 +5,9 @@ name: Python application
 
 on:
   push:
-    branches: [ "main" ]
+    
   pull_request:
-    branches: [ "main" ]
+    
 
 permissions:
   contents: read
@@ -16,6 +16,20 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    services:
+        postgres:
+            image: postgres:16
+            env:
+                POSTGRES_USER: { secrets.TEST_DB_USER}
+                POSTGRES_PASSWORD: { secrets.TEST_DB_PASS}
+                POSTGRES_DB: gradcafe
+            ports:
+                - 5430:5430
+            options: >-
+        --health-cmd pg_isready
+        --health-interval 10s
+        --health-timeout 5s
+        --health-retries 5
 
     steps:
     - uses: actions/checkout@v4
@@ -25,8 +39,11 @@ jobs:
         python-version: "3.10"
     - name: Install dependencies
       run: |
+        sudo systemctl start postgresql.service
         python -m pip install --upgrade pip
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Test with pytest
+      env:
+        TEST_DB_HOST: postgresql://test:grad_user@localhost:5430/gradcafe
       run: |
         pytest --cov-report term-missing --cov=src tests/

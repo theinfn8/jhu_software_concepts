@@ -57,7 +57,7 @@ def _processPrimaryRow(tr, tempDict):
     if tempDict["status"] == "Rejected":
         tempDict["rejected"] = tempDict["status_date"]
     elif tempDict["status"] == "Accepted":
-        tempDict["accepted"] == tempDict["status_date"]
+        tempDict["accepted"] = tempDict["status_date"]
 
     # 4 ID and specific URL
     # Located in anchor tag, so grab the "a" and read the href

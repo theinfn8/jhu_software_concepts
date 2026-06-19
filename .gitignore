@@ -3,3 +3,5 @@ venv/
 models/
 postgre_docker/
 sql/
+.pytest_cache/
+.env

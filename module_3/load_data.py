@@ -16,7 +16,7 @@ def _createTuplesList(scrapedData):
             datum["gpa"] = -1.0
         else:
             datum["gpa"] = float(datum["gpa"])
-        
+
         if datum["gre"] == "None":
             datum["gre"] = -1.0
         else:
@@ -92,8 +92,8 @@ if __name__=='__main__':
     try:
         with psycopg.connect(**config) as conn:
             with conn.cursor() as cur:
-                cur.execute(createTableSQL)
-                conn.commit()
+                #cur.execute(createTableSQL)
+                #conn.commit()
                 cur.executemany(insertSQL, _createTuplesList(_loadData()))
                 conn.commit()
                 
