@@ -25,14 +25,16 @@ jobs:
                 POSTGRES_DB: gradcafe
             ports:
                 - 5430:5430
-            options: >-
-        --health-cmd pg_isready
-        --health-interval 10s
-        --health-timeout 5s
-        --health-retries 5
 
     steps:
     - uses: actions/checkout@v4
+    - name: Use secrets
+      env:
+        TEST_DB_HOST: ${{ secrets.TEST_DB_USER }}
+        TEST_DP_PORT: ${{ secrets.TEST_DB_PORT }}
+        TEST_DB_NAME: ${{ secrets.TEST_DB_NAME }}
+        TEST_DB_USER: ${{ secrets.TEST_DB_USER }}
+        TEST_DB_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
     - name: Set up Python 3.10
       uses: actions/setup-python@v3
       with:
@@ -42,6 +44,8 @@ jobs:
         sudo systemctl start postgresql.service
         python -m pip install --upgrade pip
         if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+    - name: Stage database
+      run: python ./scripts/test_setup.py
     - name: Test with pytest
       env:
         TEST_DB_HOST: postgresql://test:grad_user@localhost:5430/gradcafe
