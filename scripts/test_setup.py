@@ -102,10 +102,10 @@ def get_config():
     load_dotenv()
     config = {
         "host" : "localhost",
-        "port" : "5432"),
-        "dbname" : "gradcafe"),
+        "port" : "5432",
+        "dbname" : "gradcafe",
         "user" : "grad_user",
-        "password" : "grad_admin_pass")
+        "password" : "grad_admin_pass"
     }
     print(config)
     return config
