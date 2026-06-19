@@ -59,6 +59,5 @@ jobs:
         pylint --fail-under=10 src
     - name: Test with pytest
       run: |
-        env
         cd module_5
         pytest --cov-report term-missing --rootdir=./ --cov=./src tests/
