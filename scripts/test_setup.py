@@ -107,7 +107,7 @@ def get_config():
         "user" : os.getenv("user"),
         "password" : os.getenv("password")
     }
-
+    print(config)
     return config
 
 try:
