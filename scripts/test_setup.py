@@ -114,7 +114,7 @@ try:
     with psycopg.connect(**get_config()) as conn:
         with conn.cursor() as cur:
             cur.execute("DROP TABLE IF EXISTS applicants")
-            cur.execute(createTableSQL)
+            cur.execute(CREATE_TABLE_SQL)
             conn.commit()
             cur.executemany(INSERT_SQL, _create_tuples_list(initial_setup))
             conn.commit()

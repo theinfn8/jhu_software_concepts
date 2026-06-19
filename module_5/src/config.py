@@ -29,22 +29,22 @@ def get_config(testconfig=None):
     :rtype: dict
     """
 
-    load_dotenv()
-
     if testconfig is None:
+        load_dotenv("./.env")
         config = {
-            "host" : os.getenv("host"),
-            "port" : os.getenv("port"),
-            "dbname" : os.getenv("dbname"),
-            "user" : os.getenv("user"),
-            "password" : os.getenv("password")
+            "host" : os.getenv("DB_HOST"),
+            "port" : os.getenv("DB_PORT"),
+            "dbname" : os.getenv("DB_NAME"),
+            "user" : os.getenv("DB_USER"),
+            "password" : os.getenv("DB_PASSWORD")
         }
     else:
+        load_dotenv("../tests/.env")
         config = {
-                "host" : os.getenv("host"),
-                "port" : os.getenv("port"),
-                "dbname" : os.getenv("dbname"),
-                "user" : os.getenv("user"),
-                "password" : os.getenv("password")
+                "host" : os.getenv("DB_HOST"),
+                "port" : os.getenv("DB_HOST"),
+                "dbname" : os.getenv("DB_HOST"),
+                "user" : os.getenv("DB_HOST"),
+                "password" : os.getenv("DB_HOST")
             }
     return config
