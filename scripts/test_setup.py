@@ -105,6 +105,7 @@ def get_config():
         "user" : os.environ.get("TEST_DB_USER"),
         "password" : os.environ.get("TEST_DB_PASSWORD")
     }
+    print(os.environ["TEST_DB_HOST"])
     return config
 
 try:
