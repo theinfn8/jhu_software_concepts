@@ -101,11 +101,11 @@ initial_setup = [
 def get_config():
     load_dotenv()
     config = {
-        "host" : os.getenv("TEST_DB_HOST"),
-        "port" : os.getenv("TEST_DB_PORT"),
-        "dbname" : os.getenv("TEST_DB_NAME"),
-        "user" : os.getenv("TEST_DB_USER"),
-        "password" : os.getenv("TEST_DB_PASSWORD")
+        "host" : os.getenv("host"),
+        "port" : os.getenv("port"),
+        "dbname" : os.getenv("dbname"),
+        "user" : os.getenv("user"),
+        "password" : os.getenv("password")
     }
 
     return config
