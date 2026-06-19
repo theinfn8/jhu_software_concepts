@@ -30,18 +30,18 @@ def get_config(testconfig=None):
 
     if testconfig is None:
         config = {
-            "host" : os.environ.get("DB_HOST"),
-            "port" : os.environ.get("DB_PORT"),
-            "dbname" : os.environ.get("DB_NAME"),
-            "user" : os.environ.get("DB_USER"),
-            "password" : os.environ.get("DB_PASSWORD")
+            "host" : os.getenv("DB_HOST"),
+            "port" : os.getenv("DB_PORT"),
+            "dbname" : os.getenv("DB_NAME"),
+            "user" : os.getenv("DB_USER"),
+            "password" : os.getenv("DB_PASSWORD")
         }
     else:
         config = {
-                "host" : os.environ.get("TEST_DB_HOST"),
-                "port" : os.environ.get("TEST_DB_PORT"),
-                "dbname" : os.environ.get("TEST_DB_NAME"),
-                "user" : os.environ.get("TEST_DB_USER"),
-                "password" : os.environ.get("TEST_DB_PASSWORD")
+                "host" : os.getenv("TEST_DB_HOST"),
+                "port" : os.getenv("TEST_DB_PORT"),
+                "dbname" : os.getenv("TEST_DB_NAME"),
+                "user" : os.getenv("TEST_DB_USER"),
+                "password" : os.getenv("TEST_DB_PASSWORD")
             }
     return config
