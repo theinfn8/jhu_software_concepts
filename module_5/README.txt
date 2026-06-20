@@ -1,13 +1,25 @@
 Name: Chris Carson, ccarso12
 Module Info: Module 4, Testing and Documentation, Due Sunday by 23:59
-Instructions: install python requirements from requirements.txt
-    Make sure the postgreSQL database is running
-    Create environment variables based on format in .env.example. Note there are separate variables
-        for the normal server access and for the test server and both sets are needed to run all
-        parts.
-    
-    Run run.py to start the Flask server, connect on localhost in your browser
-    Run pytest to conduct testing
+Fresh Install:
+    Pip
+
+    From the root directory, create a virtual environment: pip -m venv venv
+    Activate the virtual environment: source /venv/bin/activate
+    Install dependencies: pip install -r requirements.txt
+    Edit the environment file with information for this instance, production in /src/.env
+        and the test server in /tests/.env
+    To start the Flask server: python3 run.py
+    Connect on localhost in your browser: http://localhost:8080
+
+    uv
+
+    From the root directory, initialize the application: uv init
+    Install dependencies: uv add -r requirements.txt
+    Edit the environment file with information for this instance, production in /src/.env
+        and the test server in /tests/.env
+    To start the Flask server: uv run run.py
+    Connect on localhost in your browser: http://localhost:8080
+
 Approach: I attacked this in a top to bottom methodology, step 1 through to the end. Running pylint
     got me mostly issues with variable names. I was persistent in my naming convention (camel case,
     since I mostly work in Java) so I renamed all of my variables and functions and then worked
@@ -29,13 +41,16 @@ Approach: I attacked this in a top to bottom methodology, step 1 through to the 
     normal operating procedure. I just reduced the permissions on the user with pgAdmin and tested
     to ensure it still ran.
 
-    Step 4 
+    Step 4 I pip installed pydeps, apt installed graphviz, and basically done. Ran it and got mostly
+        SVG.
 
     Step 5 I have been updating requirements.txt as I have been adding functionality. It is also
     used in the github action on push, so testing in the CI pipeline would fail if there were any
     missing requirements.
 
-    After reading up on setup.py I added the setup.py and a setup.cfg to allow installs.
+    After reading up on setup.py I added the setup.py to allow installs. This is a super small and
+    uncomplicated build, so there isn't really much required. Then I added the accompanying
+    documentation required.
 
     Step 6
 

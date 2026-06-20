@@ -10,7 +10,7 @@ the calling context.
 import os
 from dotenv import load_dotenv
 
-def get_config(testconfig=None):
+def get_config(testconfig=False):
     """Retrieve database connection configuration from environment variables.
 
     Reads database connection parameters (host, port, database name, user,
@@ -29,10 +29,10 @@ def get_config(testconfig=None):
     :rtype: dict
     """
 
-    if testconfig is None:
-        load_dotenv("./.env")
-    else:
-        load_dotenv("../tests/.env")
+    if testconfig:
+        load_dotenv("./tests/.env")
+
+    load_dotenv("./src/.env")
 
     config = {
                 "host" : os.getenv("DB_HOST"),
@@ -41,4 +41,5 @@ def get_config(testconfig=None):
                 "user" : os.getenv("DB_USER"),
                 "password" : os.getenv("DB_PASSWORD")
             }
+    print(config)
     return config

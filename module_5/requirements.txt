@@ -1,3 +1,4 @@
+setuptools
 psycopg[binary]
 flask
 beautifulsoup4
