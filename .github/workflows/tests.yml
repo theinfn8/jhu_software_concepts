@@ -87,5 +87,6 @@ jobs:
       uses: snyk/actions/python-3.10@master
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
-      with:
-        args: --severity-threshold=high --file=/module_5/requirements.txt
+      run: |
+        cd module_5
+        snyk test --severity-threshold=high
