@@ -74,10 +74,8 @@ jobs:
     - name: Generate dependency.svg
       if: steps.check_file.outputs.exists == 'false'
       run: |
+        cd module_5
         pydeps ./src/app.py --noshow -T svg -o dependency.svg
-    - name: Upload SVG
-      if: steps.check_file.outputs.exists == 'false'
-      run: |
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
         git add dependency.svg
