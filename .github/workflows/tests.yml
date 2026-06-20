@@ -76,8 +76,7 @@ jobs:
       run: |
         cd module_5
         pydeps ./src/app.py --noshow -T svg -o dependency.svg
-        echo ${{ env.CI_COMMIT_AUTHOR }}
-        git config --global user.name "${{ env.CI_COMMIT_AUTHOR }}"
+        git config --global user.name "theinfn8"
         git config --global user.email "ccarson@email.com"
         git add dependency.svg
         git commit -m "${{ env.CI_COMMIT_MESSAGE }}" || echo "Nothing to commit"
