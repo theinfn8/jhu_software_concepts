@@ -1,0 +1,91 @@
+# This workflow will install Python dependencies, run tests and lint with a single version of Python
+# For more information see: https://docs.github.com/en/actions/automating-builds-and-tests/building-and-testing-python
+
+name: Python application
+
+on:
+  push:
+    
+env:
+  DB_HOST: ${{ secrets.TEST_DB_HOST }}
+  DB_PORT: ${{ secrets.TEST_DB_PORT }}
+  DB_NAME: ${{ secrets.TEST_DB_NAME }}
+  DB_USER: ${{ secrets.TEST_DB_USER }}
+  DB_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
+  TEST_DB_HOST: ${{ secrets.TEST_DB_HOST }}
+  TEST_DB_PORT: ${{ secrets.TEST_DB_PORT }}
+  TEST_DB_NAME: ${{ secrets.TEST_DB_NAME }}
+  TEST_DB_USER: ${{ secrets.TEST_DB_USER }}
+  TEST_DB_PASSWORD: ${{ secrets.TEST_DB_PASSWORD }}
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    services:
+        postgres:
+            image: postgres:16
+            env:
+                POSTGRES_USER: ${{ secrets.TEST_DB_USER }}
+                POSTGRES_PASSWORD: ${{ secrets.TEST_DB_PASSWORD}}
+                POSTGRES_DB: ${{ secrets.TEST_DB_NAME }}
+            ports:
+                - 5432:5432
+
+    steps:
+    - uses: actions/checkout@v6
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+    - uses: snyk/actions/setup@master
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v6
+      with:
+        python-version: "3.10"
+        cache: 'pip'
+    - name: Install dependencies
+      run: |
+        sudo systemctl start postgresql.service
+        python -m pip install --upgrade pip
+        pip install -r module_5/requirements.txt
+        sudo apt update && sudo apt install -y graphviz
+    - name: Stage database
+      run: |
+        python ./scripts/test_setup.py
+    - name: Lint with PyLint
+      run: |
+        cd module_5
+        pylint --fail-under=10 src
+    - name: Test with pytest
+      run: |
+        cd module_5
+        pytest --cov-report term-missing --rootdir=./ --cov=./src tests/
+    - name: Check for dependency.svg
+      id: check_file
+      run: |
+        cd module_5
+        if [ -f dependency.svg ]; then
+          echo "exists=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "exists=false" >> "$GITHUB_OUTPUT"
+        fi
+    - name: Generate dependency.svg
+      if: steps.check_file.outputs.exists == 'false'
+      run: |
+        cd module_5
+        pydeps ./src/app.py --noshow -T svg -o dependency.svg
+        git config --global user.name "theinfn8"
+        git config --global user.email "ccarson@email.com"
+        git add dependency.svg
+        git commit -m "Auto-generated pydeps SVG" || echo "Nothing to commit"
+        git push
+    - name: Run Snyk test
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      run: |
+        cd module_5
+        snyk test --severity-threshold=high

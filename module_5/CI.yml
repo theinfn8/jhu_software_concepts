@@ -53,7 +53,6 @@ jobs:
         python -m pip install --upgrade pip
         pip install -r module_5/requirements.txt
         sudo apt update && sudo apt install -y graphviz
-# if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Stage database
       run: |
         python ./scripts/test_setup.py
@@ -85,7 +84,6 @@ jobs:
         git commit -m "Auto-generated pydeps SVG" || echo "Nothing to commit"
         git push
     - name: Run Snyk test
-#      uses: snyk/actions/python-3.10@master
       env:
         SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
       run: |
