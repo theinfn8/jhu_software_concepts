@@ -20,7 +20,10 @@ Fresh Install:
     To start the Flask server: uv run run.py
     Connect on localhost in your browser: http://localhost:8080
 
-Approach: I attacked this in a top to bottom methodology, step 1 through to the end. Running pylint
+Approach: I attacked this in a top to bottom methodology, step 1 through to the end.
+
+    Step 1 I ran a simple "pylint src", saw it was a lot of changes, and piped it to a file so I
+    could read it one line at a time while I made changes (pylint src > pylint.txt). Running pylint
     got me mostly issues with variable names. I was persistent in my naming convention (camel case,
     since I mostly work in Java) so I renamed all of my variables and functions and then worked
     through any items that were remaining. Getting pytest to run successfully afterwards was a bit
@@ -52,7 +55,8 @@ Approach: I attacked this in a top to bottom methodology, step 1 through to the 
     uncomplicated build, so there isn't really much required. Then I added the accompanying
     documentation required.
 
-    Step 6
+    Step 6 I installed snyk and ran the requested scan. Took a screenshot of the terminal and saved
+    it to the module_5 folder. Not surprisingly, no issues were found.
 
     Step 7
 
