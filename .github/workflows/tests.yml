@@ -79,5 +79,5 @@ jobs:
         git config --global user.name "theinfn8"
         git config --global user.email "ccarson@email.com"
         git add dependency.svg
-        git commit -m "${{ env.CI_COMMIT_MESSAGE }}" || echo "Nothing to commit"
+        git commit -m "Auto-generated pydeps SVG" || echo "Nothing to commit"
         git push
