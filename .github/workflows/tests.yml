@@ -83,3 +83,9 @@ jobs:
         git add dependency.svg
         git commit -m "Auto-generated pydeps SVG" || echo "Nothing to commit"
         git push
+    - name: Run Snyk test
+      uses: snyk/actions/python-3.10@master
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        args: --severity-threshold=high --file=requirements.txt
