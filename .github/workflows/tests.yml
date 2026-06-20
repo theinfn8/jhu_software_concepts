@@ -6,8 +6,6 @@ name: Python application
 on:
   push:
     
-  pull_request:
-    
 env:
   DB_HOST: ${{ secrets.TEST_DB_HOST }}
   DB_PORT: ${{ secrets.TEST_DB_PORT }}
@@ -27,6 +25,8 @@ jobs:
   build:
 
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     services:
         postgres:
             image: postgres:16
@@ -39,6 +39,8 @@ jobs:
 
     steps:
     - uses: actions/checkout@v6
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
     - name: Set up Python 3.10
       uses: actions/setup-python@v6
       with:
