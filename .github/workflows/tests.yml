@@ -49,6 +49,7 @@ jobs:
         sudo systemctl start postgresql.service
         python -m pip install --upgrade pip
         pip install -r module_5/requirements.txt
+        sudo apt update && sudo apt install -y graphviz
 # if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
     - name: Stage database
       run: |
@@ -61,7 +62,24 @@ jobs:
       run: |
         cd module_5
         pytest --cov-report term-missing --rootdir=./ --cov=./src tests/
-    - name: Run pydeps if no .svg
+    - name: Check for dependency.svg
+      id: check_file
       run: |
         cd module_5
-        if [! -f dependency.svg ]; then pydeps ./src/app.py --noshow -T svg -o dependency.svg
+        if [ -f dependency.svg ]; then
+          echo "exists=true" >> "$GITHUB_OUTPUT"
+        else
+          echo "exists=false" >> "$GUTHUB_OUTPUT"
+        fi
+    - name: Generate dependency.svg
+      if: steps.check_file.outputs.exists == 'false'
+      run: |
+        pydeps ./src/app.py --noshow -T svg -o dependency.svg
+    - name: Upload SVG
+      if: steps.check_file.outputs.exists == 'false'
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git add dependency.svg
+        git commit -m "Auto-generated dependency.svg" || echo "Nothing to commit"
+        git push
