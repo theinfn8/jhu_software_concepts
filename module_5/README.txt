@@ -44,7 +44,7 @@ Approach: I attacked this in a top to bottom methodology, step 1 through to the 
     normal operating procedure. I just reduced the permissions on the user with pgAdmin and tested
     to ensure it still ran.
 
-    Step 4 I pip installed pydeps, apt installed graphviz, and basically done. Ran it and got mostly
+    Step 4 I pip installed pydeps, apt installed graphviz, and basically done. Ran it and got my
         SVG.
 
     Step 5 I have been updating requirements.txt as I have been adding functionality. It is also
@@ -58,7 +58,15 @@ Approach: I attacked this in a top to bottom methodology, step 1 through to the 
     Step 6 I installed snyk and ran the requested scan. Took a screenshot of the terminal and saved
     it to the module_5 folder. Not surprisingly, no issues were found.
 
-    Step 7
+    Step 7 I spent a ridiculous amount of time getting the CI actions that required environment
+    variables to work properly (literally like 4 hours). None of the material online anywhere
+    really explains how GitHub Actions function, and the documentation from GitHub is incredibly
+    cryptic in a lot of places. Ultimately, it came down to creating the environment variables at
+    the beginning of the action to make them available during the entire run (no tutorials,
+    documentation, books, or guides anywhere indicated that this needed to be done).
+
+    The rest of the CI actions were relatively straightforward to add (thanks to my new found
+    and hard won experience with actions). I tried to 
 
 
 References: The most difficult parts of this assignment were the Github Actions portion. I found
