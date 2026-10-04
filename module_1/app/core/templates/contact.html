@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block menu %}
+                <li><a href="{{url_for('core.home')}}">About</a></li>
+                <li><a href="{{url_for('core.contact')}}" class="selected">Contact</a></li>
+                <li><a href="{{url_for('core.projects')}}">Projects</a></li>
+{% endblock %}
+
+{% block content %}
+    <h2>Contact Me!</h2>
+    <p>
+        Email: <a href="mailto:ccarson@email.com">ccarson@email.com</a>
+    </p>
+        Or look for me on <a href="https://www.linkedin.com/in/chris-carson-16940b409">LinkedIn</a>.
+    </p>
+{% endblock %}

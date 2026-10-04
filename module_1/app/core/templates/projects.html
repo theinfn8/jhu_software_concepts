@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+{% block menu %}
+                <li><a href="{{url_for('core.home')}}">About</a></li>
+                <li><a href="{{url_for('core.contact')}}">Contact</a></li>
+                <li><a href="{{url_for('core.projects')}}" class="selected">Projects</a></li>
+{% endblock %}
+{% block content %}
+    <h2>Projects</h2>
+    <ol>
+        <li>
+            <p class="closemargins"><span style="font-weight: bold;">Title: </span>About Me</p>
+            <p class="closemargins"><span style="font-weight: bold;">Description: </span>A simple Flask-based web app that implements templates and blueprinting to provide information about me.</p>
+            <p class="closemargins"><span style="font-weight: bold;">Link: </span><a href="https://github.com/theinfn8/jhu_software_concepts/tree/main/Module%201">GitHub Location</a></p>
+        </li>
+    </ol>
+{% endblock %}

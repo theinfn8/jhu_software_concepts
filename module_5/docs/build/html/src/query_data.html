@@ -1,0 +1,439 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>query_data &mdash; module_4  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="routes" href="routes.html" />
+    <link rel="prev" title="load_data" href="load_data.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            module_4
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="app.html">app</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clean.html">clean</a></li>
+<li class="toctree-l1"><a class="reference internal" href="config.html">config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="load_data.html">load_data</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">query_data</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#src.query_data.getAmericanGPA"><code class="docutils literal notranslate"><span class="pre">getAmericanGPA()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#src.query_data.getAverageScores"><code class="docutils literal notranslate"><span class="pre">getAverageScores()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#src.query_data.getBadGREAWScores"><code class="docutils literal notranslate"><span class="pre">getBadGREAWScores()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#src.query_data.getBadGREScores"><code class="docutils literal notranslate"><span class="pre">getBadGREScores()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#src.query_data.getFallAcceptancesGPA"><code class="docutils literal notranslate"><span class="pre">getFallAcceptancesGPA()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#src.query_data.getFallAcceptancesPercent"><code class="docutils literal notranslate"><span class="pre">getFallAcceptancesPercent()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#src.query_data.getInternationalAverage"><code class="docutils literal notranslate"><span class="pre">getInternationalAverage()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#src.query_data.getJHUCSEntries"><code class="docutils literal notranslate"><span class="pre">getJHUCSEntries()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#src.query_data.getLLMUniversityListAcceptances"><code class="docutils literal notranslate"><span class="pre">getLLMUniversityListAcceptances()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#src.query_data.getStats"><code class="docutils literal notranslate"><span class="pre">getStats()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#src.query_data.getTermCount"><code class="docutils literal notranslate"><span class="pre">getTermCount()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#src.query_data.getUniversityListAcceptances"><code class="docutils literal notranslate"><span class="pre">getUniversityListAcceptances()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="routes.html">routes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="scrape.html">scrape</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">module_4</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">query_data</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/src/query_data.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-src.query_data">
+<span id="query-data"></span><h1>query_data<a class="headerlink" href="#module-src.query_data" title="Link to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.query_data.getAmericanGPA">
+<span class="sig-prename descclassname"><span class="pre">src.query_data.</span></span><span class="sig-name descname"><span class="pre">getAmericanGPA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conn</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.query_data.getAmericanGPA" title="Link to this definition"></a></dt>
+<dd><p>Query the average GPA of American applicants for Fall 2026.</p>
+<p>Executes <code class="docutils literal notranslate"><span class="pre">averageAmericanGPASQL</span></code> against the provided database
+connection. Filters to applicants whose <code class="docutils literal notranslate"><span class="pre">us_or_international</span></code>
+field is <code class="docutils literal notranslate"><span class="pre">American</span></code> and whose <code class="docutils literal notranslate"><span class="pre">term</span></code> is Fall 2026. Excludes
+sentinel GPA values of <code class="docutils literal notranslate"><span class="pre">-1.0</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>conn</strong> (<em>psycopg.Connection</em>) – An active psycopg database connection, typically opened
+and managed by <a class="reference internal" href="#src.query_data.getStats" title="src.query_data.getStats"><code class="xref py py-func docutils literal notranslate"><span class="pre">getStats()</span></code></a>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A single-element tuple containing the average GPA, e.g.
+<code class="docutils literal notranslate"><span class="pre">(3.68,)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.query_data.getAverageScores">
+<span class="sig-prename descclassname"><span class="pre">src.query_data.</span></span><span class="sig-name descname"><span class="pre">getAverageScores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conn</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.query_data.getAverageScores" title="Link to this definition"></a></dt>
+<dd><p>Query the average GPA, GRE, GRE Verbal, and GRE Analytical Writing
+scores across all applicants who reported each metric.</p>
+<p>Executes <code class="docutils literal notranslate"><span class="pre">averageScoresSQL</span></code> against the provided database connection.
+Sentinel values of <code class="docutils literal notranslate"><span class="pre">-1.0</span></code> representing missing scores are excluded
+from each average independently, so applicant counts may differ across
+metrics.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>conn</strong> (<em>psycopg.Connection</em>) – An active psycopg database connection, typically opened
+and managed by <a class="reference internal" href="#src.query_data.getStats" title="src.query_data.getStats"><code class="xref py py-func docutils literal notranslate"><span class="pre">getStats()</span></code></a>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A four-element tuple of the form
+<code class="docutils literal notranslate"><span class="pre">(avg_gpa,</span> <span class="pre">avg_gre,</span> <span class="pre">avg_gre_v,</span> <span class="pre">avg_gre_aw)</span></code>, e.g.
+<code class="docutils literal notranslate"><span class="pre">(3.72,</span> <span class="pre">320.1,</span> <span class="pre">158.4,</span> <span class="pre">4.1)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.query_data.getBadGREAWScores">
+<span class="sig-prename descclassname"><span class="pre">src.query_data.</span></span><span class="sig-name descname"><span class="pre">getBadGREAWScores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conn</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.query_data.getBadGREAWScores" title="Link to this definition"></a></dt>
+<dd><p>Query the count of GRE Analytical Writing scores that exceed the
+maximum attainable score.</p>
+<p>Executes <code class="docutils literal notranslate"><span class="pre">badGREAWScoresSQL</span></code> against the provided database
+connection. The GRE AW section is scored on a scale of 0.0 to 6.0
+in 0.5 increments; any value above 6.0 is considered invalid. Excludes
+sentinel values of <code class="docutils literal notranslate"><span class="pre">-1.0</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>conn</strong> (<em>psycopg.Connection</em>) – An active psycopg database connection, typically opened
+and managed by <a class="reference internal" href="#src.query_data.getStats" title="src.query_data.getStats"><code class="xref py py-func docutils literal notranslate"><span class="pre">getStats()</span></code></a>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A single-element tuple containing the count of invalid GRE
+AW scores, e.g. <code class="docutils literal notranslate"><span class="pre">(4,)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.query_data.getBadGREScores">
+<span class="sig-prename descclassname"><span class="pre">src.query_data.</span></span><span class="sig-name descname"><span class="pre">getBadGREScores</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conn</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.query_data.getBadGREScores" title="Link to this definition"></a></dt>
+<dd><p>Query the count of GRE total scores that exceed the maximum
+attainable score.</p>
+<p>Executes <code class="docutils literal notranslate"><span class="pre">badGREScoresSQL</span></code> against the provided database
+connection. The GRE composite score has a maximum of 340 (Verbal
+170 + Quantitative 170); any value above 340 is considered invalid.
+Excludes sentinel values of <code class="docutils literal notranslate"><span class="pre">-1.0</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>conn</strong> (<em>psycopg.Connection</em>) – An active psycopg database connection, typically opened
+and managed by <a class="reference internal" href="#src.query_data.getStats" title="src.query_data.getStats"><code class="xref py py-func docutils literal notranslate"><span class="pre">getStats()</span></code></a>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A single-element tuple containing the count of invalid GRE
+scores, e.g. <code class="docutils literal notranslate"><span class="pre">(2,)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.query_data.getFallAcceptancesGPA">
+<span class="sig-prename descclassname"><span class="pre">src.query_data.</span></span><span class="sig-name descname"><span class="pre">getFallAcceptancesGPA</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conn</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.query_data.getFallAcceptancesGPA" title="Link to this definition"></a></dt>
+<dd><p>Query the average GPA of accepted applicants for Fall 2026.</p>
+<p>Executes <code class="docutils literal notranslate"><span class="pre">averageGPAFallAcceptanceSQL</span></code> against the provided
+database connection. Filters to entries whose <code class="docutils literal notranslate"><span class="pre">term</span></code> is Fall 2026
+and whose <code class="docutils literal notranslate"><span class="pre">status</span></code> is <code class="docutils literal notranslate"><span class="pre">Accepted</span></code>. Excludes sentinel GPA values
+of <code class="docutils literal notranslate"><span class="pre">-1.0</span></code>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>conn</strong> (<em>psycopg.Connection</em>) – An active psycopg database connection, typically opened
+and managed by <a class="reference internal" href="#src.query_data.getStats" title="src.query_data.getStats"><code class="xref py py-func docutils literal notranslate"><span class="pre">getStats()</span></code></a>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A single-element tuple containing the average GPA of
+accepted Fall 2026 applicants, e.g. <code class="docutils literal notranslate"><span class="pre">(3.81,)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.query_data.getFallAcceptancesPercent">
+<span class="sig-prename descclassname"><span class="pre">src.query_data.</span></span><span class="sig-name descname"><span class="pre">getFallAcceptancesPercent</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conn</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.query_data.getFallAcceptancesPercent" title="Link to this definition"></a></dt>
+<dd><p>Query the percentage of Fall 2026 entries that are acceptances.</p>
+<p>Executes <code class="docutils literal notranslate"><span class="pre">percentAcceptedSQL</span></code> against the provided database
+connection. Filters to entries whose <code class="docutils literal notranslate"><span class="pre">term</span></code> is Fall 2026 and
+returns the acceptance rate rounded to two decimal places.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>conn</strong> (<em>psycopg.Connection</em>) – An active psycopg database connection, typically opened
+and managed by <a class="reference internal" href="#src.query_data.getStats" title="src.query_data.getStats"><code class="xref py py-func docutils literal notranslate"><span class="pre">getStats()</span></code></a>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A single-element tuple containing the acceptance
+percentage, e.g. <code class="docutils literal notranslate"><span class="pre">(21.43,)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.query_data.getInternationalAverage">
+<span class="sig-prename descclassname"><span class="pre">src.query_data.</span></span><span class="sig-name descname"><span class="pre">getInternationalAverage</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conn</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.query_data.getInternationalAverage" title="Link to this definition"></a></dt>
+<dd><p>Query the percentage of applicant entries from international students.</p>
+<p>Executes <code class="docutils literal notranslate"><span class="pre">percentageInternationalSQL</span></code> against the provided database
+connection. Excludes applicants categorised as American or Other.
+Returns the percentage rounded to two decimal places.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>conn</strong> (<em>psycopg.Connection</em>) – An active psycopg database connection, typically opened
+and managed by <a class="reference internal" href="#src.query_data.getStats" title="src.query_data.getStats"><code class="xref py py-func docutils literal notranslate"><span class="pre">getStats()</span></code></a>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A single-element tuple containing the international
+applicant percentage, e.g. <code class="docutils literal notranslate"><span class="pre">(34.57,)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.query_data.getJHUCSEntries">
+<span class="sig-prename descclassname"><span class="pre">src.query_data.</span></span><span class="sig-name descname"><span class="pre">getJHUCSEntries</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conn</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.query_data.getJHUCSEntries" title="Link to this definition"></a></dt>
+<dd><p>Query the count of entries from applicants who applied to Johns
+Hopkins University for a degree in Computer Science.</p>
+<p>Executes <code class="docutils literal notranslate"><span class="pre">jhuApplicantsSQL</span></code> against the provided database
+connection. Filters on the raw scraped <code class="docutils literal notranslate"><span class="pre">university</span></code> and
+<code class="docutils literal notranslate"><span class="pre">program</span></code> fields.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>conn</strong> (<em>psycopg.Connection</em>) – An active psycopg database connection, typically opened
+and managed by <a class="reference internal" href="#src.query_data.getStats" title="src.query_data.getStats"><code class="xref py py-func docutils literal notranslate"><span class="pre">getStats()</span></code></a>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A single-element tuple containing the count of matching
+entries, e.g. <code class="docutils literal notranslate"><span class="pre">(17,)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.query_data.getLLMUniversityListAcceptances">
+<span class="sig-prename descclassname"><span class="pre">src.query_data.</span></span><span class="sig-name descname"><span class="pre">getLLMUniversityListAcceptances</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conn</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.query_data.getLLMUniversityListAcceptances" title="Link to this definition"></a></dt>
+<dd><p>Query the count of 2026 Computer Science acceptances at a fixed
+list of target universities using LLM-generated normalised fields.</p>
+<p>Executes <code class="docutils literal notranslate"><span class="pre">llmUniversityListAcceptancesSQL</span></code> against the provided
+database connection. Identical in scope to
+<a class="reference internal" href="#src.query_data.getUniversityListAcceptances" title="src.query_data.getUniversityListAcceptances"><code class="xref py py-func docutils literal notranslate"><span class="pre">getUniversityListAcceptances()</span></code></a> but filters on
+<code class="docutils literal notranslate"><span class="pre">llm_generated_university</span></code> and <code class="docutils literal notranslate"><span class="pre">llm_generated_program</span></code> rather
+than the raw scraped fields. Discrepancies between the two results
+indicate normalisation gaps in the raw data.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>conn</strong> (<em>psycopg.Connection</em>) – An active psycopg database connection, typically opened
+and managed by <a class="reference internal" href="#src.query_data.getStats" title="src.query_data.getStats"><code class="xref py py-func docutils literal notranslate"><span class="pre">getStats()</span></code></a>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A single-element tuple containing the count of matching
+acceptances using LLM-normalised fields, e.g. <code class="docutils literal notranslate"><span class="pre">(27,)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.query_data.getStats">
+<span class="sig-prename descclassname"><span class="pre">src.query_data.</span></span><span class="sig-name descname"><span class="pre">getStats</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#src.query_data.getStats" title="Link to this definition"></a></dt>
+<dd><p>Query the database and print a suite of descriptive statistics about
+the scraped graduate application dataset.</p>
+<p>Opens a single database connection using the module-level <code class="docutils literal notranslate"><span class="pre">config</span></code>
+dictionary and executes eleven predefined analytical queries by
+delegating to dedicated query functions. Results are printed to
+stdout in a numbered format. No value is returned.</p>
+<p><strong>Queries executed:</strong></p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>None. All output is written to stdout via <code class="xref py py-func docutils literal notranslate"><span class="pre">print()</span></code>.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>None</p>
+</dd>
+<dt class="field-odd">Raises<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>psycopg.OperationalError</strong> – If the database connection cannot
+be established using the module-level
+<code class="docutils literal notranslate"><span class="pre">config</span></code> dictionary.</p></li>
+<li><p><strong>psycopg.DatabaseError</strong> – If any delegated query function
+encounters a database-level error
+during execution.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>All eleven queries share a single connection opened for the
+lifetime of this function. The connection is automatically closed
+when the <code class="docutils literal notranslate"><span class="pre">with</span></code> block exits, whether or not an exception occurs.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Q8 and Q9 are designed to be compared directly. Q8 filters on
+raw scraped <code class="docutils literal notranslate"><span class="pre">university</span></code> and <code class="docutils literal notranslate"><span class="pre">program</span></code> fields, while Q9
+filters on <code class="docutils literal notranslate"><span class="pre">llm_generated_university</span></code> and
+<code class="docutils literal notranslate"><span class="pre">llm_generated_program</span></code>. Discrepancies between their results
+indicate normalisation gaps in the raw scraped data.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Missing numeric scores (GPA, GRE, GRE V, GRE AW) are
+sentinel-coded as <code class="docutils literal notranslate"><span class="pre">-1.0</span></code> in the database. Ensure each
+delegated query function excludes sentinel values from
+aggregations, or averages and counts will be skewed.</p>
+</div>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.query_data.getTermCount">
+<span class="sig-prename descclassname"><span class="pre">src.query_data.</span></span><span class="sig-name descname"><span class="pre">getTermCount</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conn</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.query_data.getTermCount" title="Link to this definition"></a></dt>
+<dd><p>Query the count of applicant entries for Fall 2026.</p>
+<p>Executes <code class="docutils literal notranslate"><span class="pre">termCountSQL</span></code> against the provided database connection
+and returns the first row of the result.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>conn</strong> (<em>psycopg.Connection</em>) – An active psycopg database connection, typically opened
+and managed by <a class="reference internal" href="#src.query_data.getStats" title="src.query_data.getStats"><code class="xref py py-func docutils literal notranslate"><span class="pre">getStats()</span></code></a>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A single-element tuple containing the count of Fall 2026
+entries, e.g. <code class="docutils literal notranslate"><span class="pre">(142,)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.query_data.getUniversityListAcceptances">
+<span class="sig-prename descclassname"><span class="pre">src.query_data.</span></span><span class="sig-name descname"><span class="pre">getUniversityListAcceptances</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">conn</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.query_data.getUniversityListAcceptances" title="Link to this definition"></a></dt>
+<dd><p>Query the count of 2026 Computer Science acceptances at a fixed
+list of target universities using raw scraped fields.</p>
+<p>Executes <code class="docutils literal notranslate"><span class="pre">universityListAcceptancesSQL</span></code> against the provided
+database connection. Filters on the raw scraped <code class="docutils literal notranslate"><span class="pre">university</span></code> and
+<code class="docutils literal notranslate"><span class="pre">program</span></code> fields for Georgetown University, MIT, Stanford
+University, and Carnegie Mellon University. Compare with
+<a class="reference internal" href="#src.query_data.getLLMUniversityListAcceptances" title="src.query_data.getLLMUniversityListAcceptances"><code class="xref py py-func docutils literal notranslate"><span class="pre">getLLMUniversityListAcceptances()</span></code></a> to assess the impact of
+LLM-based name normalisation.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>conn</strong> (<em>psycopg.Connection</em>) – An active psycopg database connection, typically opened
+and managed by <a class="reference internal" href="#src.query_data.getStats" title="src.query_data.getStats"><code class="xref py py-func docutils literal notranslate"><span class="pre">getStats()</span></code></a>.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A single-element tuple containing the count of matching
+acceptances, e.g. <code class="docutils literal notranslate"><span class="pre">(23,)</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="load_data.html" class="btn btn-neutral float-left" title="load_data" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="routes.html" class="btn btn-neutral float-right" title="routes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Chris Carson.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,12 @@
+setuptools
+psycopg[binary]
+flask
+beautifulsoup4
+urllib3
+dotenv
+pytest
+pytest-cov
+sphinx
+sphinx-rtd-theme
+pylint
+pydeps

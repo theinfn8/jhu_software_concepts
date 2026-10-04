@@ -1,0 +1,179 @@
+(venv) chaosburn@pop-os:~/Projects/jhu_software_concepts/module_4$ pytest --cov-report term-missing --cov=src tests/
+....................../home/chaosburn/Projects/jhu_software_concepts/module_4/venv/lib/python3.12/site-packages/coverage/inorout.py:561: CoverageWarning: Module module_4/src was never imported. (module-not-imported); see https://coverage.readthedocs.io/en/7.14.1/messages.html#warning-module-not-imported
+  self.warn(f"Module {pkg} was never imported.", slug="module-not-imported")
+                                                                                         [100%]
+=================================================== tests coverage ===================================================
+__________________________________ coverage: platform linux, python 3.12.3-final-0 ___________________________________
+
+Name                Stmts   Miss  Cover   Missing
+-------------------------------------------------
+src/__init__.py         0      0   100%
+src/app.py              7      0   100%
+src/clean.py           70      0   100%
+src/config.py           3      0   100%
+src/load_data.py       30      0   100%
+src/query_data.py      93      0   100%
+src/routes.py          49      0   100%
+src/scrape.py          46      0   100%
+-------------------------------------------------
+TOTAL                 298      0   100%
+Required test coverage of 100% reached. Total coverage: 100.00%
+22 passed in 19.36s
+
+
+
+
+
+(venv) chaosburn@pop-os:~/Projects/jhu_software_concepts/module_4$ pytest -m "web or buttons or analysis or db or integration"
+================================================ test session starts =================================================
+platform linux -- Python 3.12.3, pytest-9.0.3, pluggy-1.6.0
+rootdir: /home/chaosburn/Projects/jhu_software_concepts/module_4
+plugins: cov-7.1.0
+collected 22 items
+
+tests/test_analysis_format.py .............                                                                    [ 59%]
+tests/test_buttons.py ..                                                                                       [ 68%]
+tests/test_db_insert.py .....                                                                                  [ 90%]
+tests/test_flask_page.py .                                                                                     [ 95%]
+tests/test_integration_end_to_end.py .                                                                         [100%]
+
+================================================== warnings summary ==================================================
+tests/test_analysis_format.py:8
+  /home/chaosburn/Projects/jhu_software_concepts/module_4/tests/test_analysis_format.py:8: PytestUnknownMarkWarning: Unknown pytest.mark.analysis - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.analysis
+
+tests/test_analysis_format.py:39
+  /home/chaosburn/Projects/jhu_software_concepts/module_4/tests/test_analysis_format.py:39: PytestUnknownMarkWarning: Unknown pytest.mark.analysis - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.analysis
+
+tests/test_analysis_format.py:40
+  /home/chaosburn/Projects/jhu_software_concepts/module_4/tests/test_analysis_format.py:40: PytestUnknownMarkWarning: Unknown pytest.mark.db - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.db
+
+tests/test_analysis_format.py:48
+  /home/chaosburn/Projects/jhu_software_concepts/module_4/tests/test_analysis_format.py:48: PytestUnknownMarkWarning: Unknown pytest.mark.db - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.db
+
+tests/test_analysis_format.py:49
+  /home/chaosburn/Projects/jhu_software_concepts/module_4/tests/test_analysis_format.py:49: PytestUnknownMarkWarning: Unknown pytest.mark.analysis - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.analysis
+
+tests/test_analysis_format.py:57
+  /home/chaosburn/Projects/jhu_software_concepts/module_4/tests/test_analysis_format.py:57: PytestUnknownMarkWarning: Unknown pytest.mark.db - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.db
+
+tests/test_analysis_format.py:58
+  /home/chaosburn/Projects/jhu_software_concepts/module_4/tests/test_analysis_format.py:58: PytestUnknownMarkWarning: Unknown pytest.mark.analysis - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.analysis
+
+tests/test_analysis_format.py:65
+  /home/chaosburn/Projects/jhu_software_concepts/module_4/tests/test_analysis_format.py:65: PytestUnknownMarkWarning: Unknown pytest.mark.db - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.db
+
+tests/test_analysis_format.py:66
+  /home/chaosburn/Projects/jhu_software_concepts/module_4/tests/test_analysis_format.py:66: PytestUnknownMarkWarning: Unknown pytest.mark.analysis - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.analysis
+
+tests/test_analysis_format.py:77
+  /home/chaosburn/Projects/jhu_software_concepts/module_4/tests/test_analysis_format.py:77: PytestUnknownMarkWarning: Unknown pytest.mark.db - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.db
+
+tests/test_analysis_format.py:78
+  /home/chaosburn/Projects/jhu_software_concepts/module_4/tests/test_analysis_format.py:78: PytestUnknownMarkWarning: Unknown pytest.mark.analysis - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.analysis
+
+tests/test_analysis_format.py:85
+  /home/chaosburn/Projects/jhu_software_concepts/module_4/tests/test_analysis_format.py:85: PytestUnknownMarkWarning: Unknown pytest.mark.db - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.db
+
+tests/test_analysis_format.py:86
+  /home/chaosburn/Projects/jhu_software_concepts/module_4/tests/test_analysis_format.py:86: PytestUnknownMarkWarning: Unknown pytest.mark.analysis - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.analysis
+
+tests/test_analysis_format.py:93
+  /home/chaosburn/Projects/jhu_software_concepts/module_4/tests/test_analysis_format.py:93: PytestUnknownMarkWarning: Unknown pytest.mark.db - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.db
+
+tests/test_analysis_format.py:94
+  /home/chaosburn/Projects/jhu_software_concepts/module_4/tests/test_analysis_format.py:94: PytestUnknownMarkWarning: Unknown pytest.mark.analysis - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.analysis
+
+tests/test_analysis_format.py:101
+  /home/chaosburn/Projects/jhu_software_concepts/module_4/tests/test_analysis_format.py:101: PytestUnknownMarkWarning: Unknown pytest.mark.db - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.db
+
+tests/test_analysis_format.py:102
+  /home/chaosburn/Projects/jhu_software_concepts/module_4/tests/test_analysis_format.py:102: PytestUnknownMarkWarning: Unknown pytest.mark.analysis - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.analysis
+
+tests/test_analysis_format.py:109
+  /home/chaosburn/Projects/jhu_software_concepts/module_4/tests/test_analysis_format.py:109: PytestUnknownMarkWarning: Unknown pytest.mark.db - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.db
+
+tests/test_analysis_format.py:110
+  /home/chaosburn/Projects/jhu_software_concepts/module_4/tests/test_analysis_format.py:110: PytestUnknownMarkWarning: Unknown pytest.mark.analysis - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.analysis
+
+tests/test_analysis_format.py:117
+  /home/chaosburn/Projects/jhu_software_concepts/module_4/tests/test_analysis_format.py:117: PytestUnknownMarkWarning: Unknown pytest.mark.db - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.db
+
+tests/test_analysis_format.py:118
+  /home/chaosburn/Projects/jhu_software_concepts/module_4/tests/test_analysis_format.py:118: PytestUnknownMarkWarning: Unknown pytest.mark.analysis - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.analysis
+
+tests/test_analysis_format.py:125
+  /home/chaosburn/Projects/jhu_software_concepts/module_4/tests/test_analysis_format.py:125: PytestUnknownMarkWarning: Unknown pytest.mark.db - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.db
+
+tests/test_analysis_format.py:126
+  /home/chaosburn/Projects/jhu_software_concepts/module_4/tests/test_analysis_format.py:126: PytestUnknownMarkWarning: Unknown pytest.mark.analysis - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.analysis
+
+tests/test_analysis_format.py:133
+  /home/chaosburn/Projects/jhu_software_concepts/module_4/tests/test_analysis_format.py:133: PytestUnknownMarkWarning: Unknown pytest.mark.analysis - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.analysis
+
+tests/test_buttons.py:7
+  /home/chaosburn/Projects/jhu_software_concepts/module_4/tests/test_buttons.py:7: PytestUnknownMarkWarning: Unknown pytest.mark.buttons - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.buttons
+
+tests/test_buttons.py:31
+  /home/chaosburn/Projects/jhu_software_concepts/module_4/tests/test_buttons.py:31: PytestUnknownMarkWarning: Unknown pytest.mark.buttons - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.buttons
+
+tests/test_db_insert.py:7
+  /home/chaosburn/Projects/jhu_software_concepts/module_4/tests/test_db_insert.py:7: PytestUnknownMarkWarning: Unknown pytest.mark.db - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.db
+
+tests/test_db_insert.py:14
+  /home/chaosburn/Projects/jhu_software_concepts/module_4/tests/test_db_insert.py:14: PytestUnknownMarkWarning: Unknown pytest.mark.db - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.db
+
+tests/test_db_insert.py:34
+  /home/chaosburn/Projects/jhu_software_concepts/module_4/tests/test_db_insert.py:34: PytestUnknownMarkWarning: Unknown pytest.mark.db - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.db
+
+tests/test_db_insert.py:66
+  /home/chaosburn/Projects/jhu_software_concepts/module_4/tests/test_db_insert.py:66: PytestUnknownMarkWarning: Unknown pytest.mark.db - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.db
+
+tests/test_db_insert.py:73
+  /home/chaosburn/Projects/jhu_software_concepts/module_4/tests/test_db_insert.py:73: PytestUnknownMarkWarning: Unknown pytest.mark.db - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.db
+
+tests/test_flask_page.py:3
+  /home/chaosburn/Projects/jhu_software_concepts/module_4/tests/test_flask_page.py:3: PytestUnknownMarkWarning: Unknown pytest.mark.integration - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.integration
+
+tests/test_flask_page.py:4
+  /home/chaosburn/Projects/jhu_software_concepts/module_4/tests/test_flask_page.py:4: PytestUnknownMarkWarning: Unknown pytest.mark.web - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.web
+
+tests/test_integration_end_to_end.py:5
+  /home/chaosburn/Projects/jhu_software_concepts/module_4/tests/test_integration_end_to_end.py:5: PytestUnknownMarkWarning: Unknown pytest.mark.integration - is this a typo?  You can register custom marks to avoid this warning - for details, see https://docs.pytest.org/en/stable/how-to/mark.html
+    @pytest.mark.integration
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+========================================== 22 passed, 34 warnings in 12.87s ==========================================
+(venv) chaosburn@pop-os:~/Projects/jhu_software_concepts/module_4$

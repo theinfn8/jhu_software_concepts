@@ -1,0 +1,13 @@
+__pycache__/
+venv/
+models/
+postgre_docker/
+sql/
+.pytest_cache/
+.env
+.env.db
+.env.rmq
+.env.web
+.env.worker
+pgdata
+saved_model/

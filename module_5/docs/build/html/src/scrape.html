@@ -1,0 +1,253 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>scrape &mdash; module_4  documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=9edc463e" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=5929fcd5"></script>
+      <script src="../_static/doctools.js?v=fd6eb6e6"></script>
+      <script src="../_static/sphinx_highlight.js?v=6ffebe34"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="routes" href="routes.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            module_4
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="app.html">app</a></li>
+<li class="toctree-l1"><a class="reference internal" href="clean.html">clean</a></li>
+<li class="toctree-l1"><a class="reference internal" href="config.html">config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="load_data.html">load_data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="query_data.html">query_data</a></li>
+<li class="toctree-l1"><a class="reference internal" href="routes.html">routes</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">scrape</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#src.scrape.load_data"><code class="docutils literal notranslate"><span class="pre">load_data()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#src.scrape.scrape_data"><code class="docutils literal notranslate"><span class="pre">scrape_data()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">module_4</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">scrape</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/src/scrape.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-src.scrape">
+<span id="scrape"></span><h1>scrape<a class="headerlink" href="#module-src.scrape" title="Link to this heading"></a></h1>
+<dl class="py function">
+<dt class="sig sig-object py" id="src.scrape.load_data">
+<span class="sig-prename descclassname"><span class="pre">src.scrape.</span></span><span class="sig-name descname"><span class="pre">load_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fileName</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.scrape.load_data" title="Link to this definition"></a></dt>
+<dd><p>Load and deserialise a JSON file from disk.</p>
+<p>Opens the file at <code class="docutils literal notranslate"><span class="pre">fileName</span></code> in read mode and parses its contents
+using <code class="xref py py-func docutils literal notranslate"><span class="pre">json.load()</span></code>, returning the deserialised Python object.
+The file is automatically closed when the <code class="docutils literal notranslate"><span class="pre">with</span></code> block exits,
+whether or not an exception occurs.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>fileName</strong> (<em>str</em><em> or </em><em>os.PathLike</em>) – Path to the JSON file to load. Accepts both
+absolute and relative paths.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>The deserialised contents of the JSON file. The return
+type mirrors the top-level JSON structure — typically a
+<code class="xref py py-class docutils literal notranslate"><span class="pre">dict</span></code> or <code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code>.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>dict or list</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>FileNotFoundError</strong> – If no file exists at <code class="docutils literal notranslate"><span class="pre">fileName</span></code>.</p></li>
+<li><p><strong>PermissionError</strong> – If the process does not have read
+permission for the file.</p></li>
+<li><p><strong>json.JSONDecodeError</strong> – If the file contents are not valid
+JSON.</p></li>
+<li><p><strong>IsADirectoryError</strong> – If <code class="docutils literal notranslate"><span class="pre">fileName</span></code> resolves to a directory
+rather than a file.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="src.scrape.scrape_data">
+<span class="sig-prename descclassname"><span class="pre">src.scrape.</span></span><span class="sig-name descname"><span class="pre">scrape_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lastIDFetched</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#src.scrape.scrape_data" title="Link to this definition"></a></dt>
+<dd><p>Scrape and parse graduate application entries from GradCafe, stopping
+when previously fetched records are reached or pages are exhausted.</p>
+<p>Iterates through paginated GradCafe survey results page by page,
+fetching each via <code class="xref py py-func docutils literal notranslate"><span class="pre">_fetchPage()</span></code>, parsing the HTML table body
+with BeautifulSoup, and cleaning each page’s rows via
+<code class="xref py py-func docutils literal notranslate"><span class="pre">clean.clean_data()</span></code>. Accumulates cleaned records across pages
+until one of the following termination conditions is met:</p>
+<p><strong>Termination conditions:</strong></p>
+<table class="docutils align-default">
+<thead>
+<tr class="row-odd"><th class="head"><p>Condition</p></th>
+<th class="head"><p>Behaviour</p></th>
+</tr>
+</thead>
+<tbody>
+<tr class="row-even"><td><p>HTTP status is not <code class="docutils literal notranslate"><span class="pre">200</span></code></p></td>
+<td><p>Returns <code class="docutils literal notranslate"><span class="pre">None</span></code></p></td>
+</tr>
+<tr class="row-odd"><td><p><code class="xref py py-func docutils literal notranslate"><span class="pre">clean.clean_data()</span></code> returns <code class="docutils literal notranslate"><span class="pre">None</span></code>
+(<code class="docutils literal notranslate"><span class="pre">lastIDFetched</span></code> was encountered)</p></td>
+<td><p>Stops pagination; returns
+accumulated data</p></td>
+</tr>
+<tr class="row-even"><td><p>A page yields fewer than 20 records
+(final or near-final page reached)</p></td>
+<td><p>Stops pagination; returns
+accumulated data</p></td>
+</tr>
+<tr class="row-odd"><td><p>All pages exhausted without hitting
+any other termination condition</p></td>
+<td><p>Returns accumulated data</p></td>
+</tr>
+</tbody>
+</table>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>lastIDFetched</strong> (<em>int</em><em> or </em><em>None</em>) – The integer ID of the most recently scraped
+record from a prior run. Passed to
+<code class="xref py py-func docutils literal notranslate"><span class="pre">clean.clean_data()</span></code> on each page to
+detect where new data ends and already-seen
+data begins. Pass <code class="docutils literal notranslate"><span class="pre">0</span></code> or <code class="docutils literal notranslate"><span class="pre">None</span></code> to scrape
+all available records.</p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>A flat list of cleaned application record dictionaries
+accumulated across all pages, or <code class="docutils literal notranslate"><span class="pre">None</span></code> if any page
+fetch returned a non-200 HTTP status. Returns an empty
+list if no new records were found before the last page.</p>
+</dd>
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p>list[dict] or None</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><strong>AttributeError</strong> – If the parsed HTML page does not contain a
+<code class="docutils literal notranslate"><span class="pre">&lt;tbody&gt;</span></code> element, causing
+<code class="docutils literal notranslate"><span class="pre">tableBody.find_all</span></code> to be called on
+<code class="docutils literal notranslate"><span class="pre">None</span></code>.</p></li>
+<li><p><strong>Exception</strong> – Any unhandled exception raised by
+<code class="xref py py-func docutils literal notranslate"><span class="pre">_fetchPage()</span></code> or <code class="xref py py-func docutils literal notranslate"><span class="pre">clean.clean_data()</span></code>,
+such as network errors or malformed row
+structure, will propagate to the caller uncaught.</p></li>
+</ul>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Each call to <code class="xref py py-func docutils literal notranslate"><span class="pre">_fetchPage()</span></code> incurs a random 0–5 second
+polite delay. For a dataset spanning <code class="docutils literal notranslate"><span class="pre">n</span></code> pages, expect a
+minimum wall-clock time of approximately <code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">*</span> <span class="pre">0</span></code> seconds and
+a maximum of <code class="docutils literal notranslate"><span class="pre">n</span> <span class="pre">*</span> <span class="pre">5</span></code> seconds, plus network latency.</p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code class="docutils literal notranslate"><span class="pre">&lt;</span> <span class="pre">20</span> <span class="pre">records</span></code> heuristic for detecting the final page
+assumes GradCafe serves exactly 20 entries per full page. If
+the source site changes its page size, this condition may
+terminate scraping prematurely or fail to detect the last page.</p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>If <code class="docutils literal notranslate"><span class="pre">tableBody</span></code> is <code class="docutils literal notranslate"><span class="pre">None</span></code> (e.g. GradCafe changes its HTML
+structure or returns a CAPTCHA or error page with a <code class="docutils literal notranslate"><span class="pre">200</span></code>
+status), <code class="docutils literal notranslate"><span class="pre">tableBody.find_all(&quot;tr&quot;)</span></code> will raise an
+<code class="xref py py-exc docutils literal notranslate"><span class="pre">AttributeError</span></code> and scraping will abort without returning
+partial data. Consider adding a <code class="docutils literal notranslate"><span class="pre">None</span></code> guard on <code class="docutils literal notranslate"><span class="pre">tableBody</span></code>
+before proceeding.</p>
+</div>
+<div class="admonition seealso">
+<p class="admonition-title">See also</p>
+<p><code class="xref py py-func docutils literal notranslate"><span class="pre">_fetchPage()</span></code> — fetches and returns raw page content for
+a given page number.</p>
+<p><code class="xref py py-func docutils literal notranslate"><span class="pre">clean.clean_data()</span></code> — parses raw <code class="docutils literal notranslate"><span class="pre">&lt;tr&gt;</span></code> elements into
+cleaned record dictionaries and detects the <code class="docutils literal notranslate"><span class="pre">lastIDFetched</span></code>
+boundary.</p>
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="routes.html" class="btn btn-neutral float-left" title="routes" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2026, Chris Carson.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

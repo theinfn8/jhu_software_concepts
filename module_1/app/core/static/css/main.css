@@ -1,0 +1,97 @@
+* {
+    font-family: Arial, Helvetica, sans-serif;
+    background-color: White;
+    color: Black;
+
+}
+
+body{
+    max-width: 1024px;
+}
+
+nav {
+    background-color: #6ba099;
+    color: black;
+    text-align: right;
+    width: 100%;
+}
+
+ul {
+    list-style-type: none;
+    padding: 0px;
+    margin: 0;
+    overflow: hidden;
+    background-color: #6ba099;
+    display: flex;
+    justify-content: right;
+}
+
+ul li a {
+    display: block;
+    background-color: #6ba099;
+    padding: 15px 10px;
+    text-decoration: none;
+}
+
+ul li a:hover {
+    background-color: #46877e;
+}
+
+.selected {
+    background-color: #46877e;
+}
+
+.subheading {
+    font-weight: bold;
+    font-size: 1rem;
+    text-decoration: underline;
+    color: #46877e;
+    padding: 0px;
+    margin-top: 0px;
+}
+
+.closemargins {
+    margin: 0px;
+    padding: 0px;
+}
+
+.biopic {
+    float: right;
+}
+
+main {
+    max-width: 1024px;
+}
+
+footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    max-width: 1024px;
+    font-weight: lighter;
+    font-size: x-small;
+    text-align: center;
+    margin-top: 4rem;
+    background-color: #6ba099;
+}
+
+footer p {
+    background-color: #6ba099;
+}
+
+h2 {
+    font-weight: bold;
+    font-size: 2.5rem;
+    margin-bottom: 0px;
+}
+
+h3 {
+    font-weight: bold;
+    font-size: 2rem;
+}
+
+h4 {
+    font-weight: bold;
+    font-size: 1rem;
+}

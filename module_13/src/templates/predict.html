@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block title %}Will You Get In?{% endblock %}
+{% block body_attrs %}{% endblock %}
+{% block content %}
+<h3>Will You Get In?</h3>
+
+<div class="descriptiontext disclaimer">
+    <p>
+        This is a class project (JHU EN.605.256) prediction tool. The model
+        was fine-tuned on scraped, self-reported GradCafe admissions data --
+        it has no access to real admissions criteria, transcripts, or
+        recommendation letters. <strong>This is not a real admissions
+        decision and should not be used to make any actual decisions about
+        applying to or attending a graduate program.</strong>
+    </p>
+</div>
+
+{% if error %}
+<div class="predict-error">
+    <p>{{ error }}</p>
+</div>
+{% endif %}
+
+{% if prediction %}
+<div class="predict-result">
+    <h4>Prediction: {{ prediction.label }}</h4>
+    <p class="score">Model score: {{ "%.1f"|format(prediction.p_accepted * 100) }}%</p>
+    <p class="smalltext">
+        This score is the model's estimated probability of "Accepted," not a
+        guarantee -- and not a real admissions committee's judgment.
+    </p>
+</div>
+{% endif %}
+
+<form method="POST" action="{{ url_for('core.predict') }}" class="predict-form">
+    <label for="program">Program name</label>
+    <input type="text" id="program" name="program"
+           placeholder="e.g. Computer Science"
+           value="{{ form_values.program }}">
+
+    <label for="university">University name</label>
+    <input type="text" id="university" name="university"
+           placeholder="e.g. Johns Hopkins University"
+           value="{{ form_values.university }}">
+
+    <label for="degree">Degree type</label>
+    <select id="degree" name="degree">
+        <option value="PhD" {% if form_values.degree == "PhD" %}selected{% endif %}>PhD</option>
+        <option value="Master's" {% if form_values.degree == "Master's" %}selected{% endif %}>Master's</option>
+        <option value="PsyD" {% if form_values.degree == "PsyD" %}selected{% endif %}>PsyD</option>
+    </select>
+
+    <label for="citizenship">Citizenship</label>
+    <select id="citizenship" name="citizenship">
+        <option value="American" {% if form_values.citizenship == "American" %}selected{% endif %}>American</option>
+        <option value="International" {% if form_values.citizenship == "International" %}selected{% endif %}>International</option>
+        <option value="Other" {% if form_values.citizenship == "Other" %}selected{% endif %}>Other</option>
+    </select>
+
+    <label for="gpa">GPA</label>
+    <input type="text" id="gpa" name="gpa"
+           placeholder="e.g. 3.87 (leave blank if not reported)"
+           value="{{ form_values.gpa }}">
+    <span class="field-error" id="gpa-error"></span>
+
+    <label for="gre">GRE (Quant)</label>
+    <input type="text" id="gre" name="gre"
+           placeholder="e.g. 168 (leave blank if not reported)"
+           value="{{ form_values.gre }}">
+    <span class="field-error" id="gre-error"></span>
+
+    <label for="gre_v">GRE Verbal</label>
+    <input type="text" id="gre_v" name="gre_v"
+           placeholder="e.g. 160 (leave blank if not reported)"
+           value="{{ form_values.gre_v }}">
+    <span class="field-error" id="gre_v-error"></span>
+
+    <label for="gre_aw">GRE Analytical Writing</label>
+    <input type="text" id="gre_aw" name="gre_aw"
+           placeholder="e.g. 4.5 (leave blank if not reported)"
+           value="{{ form_values.gre_aw }}">
+    <span class="field-error" id="gre_aw-error"></span>
+
+    <label for="comments">Comments / applicant statement</label>
+    <textarea id="comments" name="comments" rows="4"
+              placeholder="Optional -- research experience, notes, etc.">{{ form_values.comments }}</textarea>
+
+    <span class="field-error" id="form-error"></span>
+    <button type="submit">Get Prediction</button>
+</form>
+
+<script src="{{ url_for('static', filename='js/predict.js') }}"></script>
+{% endblock %}
