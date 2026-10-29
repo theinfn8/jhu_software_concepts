@@ -1,54 +1,43 @@
 """
-Core Flask blueprint: routes, analysis rendering, and database refresh.
+Core Flask blueprint: routes, analysis rendering, and task queueing.
 
 This module defines the ``core`` :class:`flask.Blueprint`, which
-provides the application's home page, an HTML-rendering helper for the
-eleven analytical statistics computed elsewhere in the project, and
-two API endpoints that respectively trigger a scrape-and-insert
-database refresh and return the rendered analysis HTML. A
-process-wide :class:`threading.Lock` guards against concurrent
-database refreshes.
+provides the application's home page, a health check, an HTML-rendering
+helper for the eleven analytical statistics, and API endpoints that
+queue work for the RabbitMQ worker and report on it.
+
+Write operations (scraping and recomputing analytics) are never run in
+the request. Each one is recorded in the ``tasks`` table and published
+to RabbitMQ; the endpoint returns ``202`` with a ``task_id`` that the
+page polls through ``GET /api/tasks/<task_id>``. The worker updates the
+task's status as it runs.
 
 **Module contents:**
 
 +----------------------------+------------------------------------------+
 | Name                       | Description                              |
 +============================+==========================================+
-| :data:`UPDATING_LOCK`      | Module-level lock guarding concurrent    |
-|                             | database refreshes                      |
-+----------------------------+------------------------------------------+
 | :data:`bp`                 | The ``core`` :class:`flask.Blueprint`    |
 +----------------------------+------------------------------------------+
+| :data:`STALE_AFTER`        | Age at which an unfinished task is       |
+|                            | reported as stale                        |
++----------------------------+------------------------------------------+
 | :func:`get_analysis_html`  | Build the HTML fragment of all eleven    |
-|                             | analytical answers                      |
+|                            | analytical answers                       |
 +----------------------------+------------------------------------------+
-| :func:`home`               | ``GET /`` -- render the home page        |
-+----------------------------+------------------------------------------+
-| :func:`update_database`    | ``POST /api/pull-data`` -- scrape and    |
-|                             | insert new records                      |
-+----------------------------+------------------------------------------+
-| :func:`update_analysis`    | ``GET /api/analysis`` -- return rendered |
-|                             | analysis HTML as JSON                   |
+| :func:`_queue_task`        | Record a task row and publish it         |
 +----------------------------+------------------------------------------+
 
 **Dependencies:**
 
-* :mod:`threading` -- standard library, supplies :class:`~threading.Lock`
-  used as ``UPDATING_LOCK``.
-* :mod:`flask` -- third-party, supplies :class:`~flask.Blueprint` and
-  :func:`~flask.render_template`.
-* :mod:`psycopg` -- third-party, used to open a short-lived connection
-  for fetching the last-inserted record ID.
-* :mod:`src.query_data` -- local module, supplies the eleven
-  statistic-fetching functions invoked by :func:`get_analysis_html`.
-* :mod:`src.scrape` -- local module, supplies
-  :func:`~src.scrape.scrape_data`, used by :func:`update_database`.
-* :mod:`src.load_data` -- local module, supplies
-  :func:`~src.load_data.insert_entries`, used by
-  :func:`update_database` to persist newly scraped records.
-* :mod:`src.config` -- local module, supplies ``config``, the database
-  connection parameters used by :func:`get_analysis_html` and
-  :func:`update_database`.
+* :mod:`flask` -- third-party, supplies :class:`~flask.Blueprint`,
+  :func:`~flask.render_template` and :func:`~flask.jsonify`.
+* :mod:`psycopg` -- third-party, used for short-lived connections to
+  read the analysis view and to read and write the ``tasks`` table.
+* :mod:`pika` -- third-party, supplies the AMQP exceptions caught when
+  publishing fails.
+* :mod:`publisher` -- local module, supplies
+  :func:`~publisher.publish_task`.
 
 **Module-level objects:**
 
@@ -61,28 +50,28 @@ database refreshes.
 
 **Registered routes:**
 
-+----------------------+--------+------------------------------------------+
-| URL                   | Method | Handler                                   |
-+=======================+========+============================================+
-| ``/``                 | GET    | :func:`home`                              |
-+----------------------+--------+------------------------------------------+
-| ``/api/pull-data``    | POST   | :func:`update_database`                   |
-+----------------------+--------+------------------------------------------+
-| ``/api/analysis``     | GET    | :func:`update_analysis`                   |
-+----------------------+--------+------------------------------------------+
-
-.. note::
-    Despite their names, :func:`update_database` and
-    :func:`update_analysis` serve different purposes:
-    :func:`update_database` scrapes the source site and persists new
-    records (the actual "update"), while :func:`update_analysis`
-    performs no database writes -- it only re-renders the analysis
-    HTML fragment via :func:`get_analysis_html` under the same lock.
++--------------------------+--------+--------------------------------------+
+| URL                      | Method | Handler                              |
++==========================+========+======================================+
+| ``/``, ``/analysis``     | GET    | :func:`home`                         |
++--------------------------+--------+--------------------------------------+
+| ``/health``              | GET    | :func:`health`                       |
++--------------------------+--------+--------------------------------------+
+| ``/api/pull-data``       | POST   | :func:`update_database`              |
++--------------------------+--------+--------------------------------------+
+| ``/api/analysis``        | POST   | :func:`update_analysis`              |
++--------------------------+--------+--------------------------------------+
+| ``/api/analysis``        | GET    | :func:`get_analysis`                 |
++--------------------------+--------+--------------------------------------+
+| ``/api/tasks/<task_id>`` | GET    | :func:`get_task`                     |
++--------------------------+--------+--------------------------------------+
 
 """
 import os
 import math
 import re
+import uuid
+from datetime import timedelta
 
 from flask import Blueprint, render_template, jsonify, current_app
 import psycopg
@@ -96,6 +85,21 @@ bp = Blueprint('core', __name__,
                template_folder="templates",
                static_folder="static",
                static_url_path='/core/static')
+
+# A task left queued or running this long is reported as stale
+STALE_AFTER = timedelta(minutes=30)
+
+INSERT_TASK_SQL = "INSERT INTO tasks (task_id, kind) VALUES (%s, %s);"
+
+FAIL_TASK_SQL = """
+    UPDATE tasks SET status = 'failed', error = %s, updated_at = NOW() WHERE task_id = %s;
+"""
+
+SELECT_TASK_SQL = """
+    SELECT task_id::text, kind, status, error, created_at, updated_at,
+           (status IN ('queued', 'running') AND updated_at < NOW() - %s) AS stale
+    FROM tasks WHERE task_id = %s;
+"""
 
 def format_number(n: float) -> str:
     """Returns a number to exactly two decimal places."""
@@ -231,74 +235,181 @@ def home():
     # print(analysis)
     return render_template("index.html", analysis_html=analysis)
 
-@bp.route('/api/pull-data', methods=['POST'])
-def update_database():
+@bp.route('/health')
+def health():
     """
-    Trigger a synchronous database refresh by scraping new application
-    entries from the source site and inserting any that are new.
+    Report that the web service is up and able to serve requests.
 
-    :returns: On success, a dict with ``status`` set to ``"Available"``
-              and ``maxID`` set to the string-formatted highest known
-              ``p_id`` after the refresh (default Flask ``200`` status).
-              If a refresh is already underway, a tuple of a dict with
-              ``status`` set to ``"UPDATING"`` and ``busy`` set to
-              ``True``, paired with HTTP status ``409``.
-    :rtype: dict or tuple[dict, int]
-"""
+    Used by the Docker Compose healthcheck. Intentionally does not touch
+    the database or RabbitMQ so that a dependency outage does not mark
+    the web container itself as unhealthy.
+
+    **Route:**
+
+    +--------------+--------+------------------------------------------+
+    | URL          | Method | Description                              |
+    +==============+========+==========================================+
+    | ``/health``  | GET    | Liveness check for the web service       |
+    +--------------+--------+------------------------------------------+
+
+    :returns: A JSON body with ``status`` set to ``"ok"`` and HTTP ``200``.
+    :rtype: tuple[flask.Response, int]
+    """
+    return jsonify({"status": "ok"}), 200
+
+def _queue_task(kind):
+    """
+    Record a new task in the ``tasks`` table and publish it to RabbitMQ.
+
+    The row is committed as ``queued`` before publishing, so the worker
+    always finds it when the message arrives. If the publish fails, the
+    row is marked ``failed`` so it does not sit in ``queued`` forever.
+
+    :param kind: Task type identifier, e.g. ``"scrape_new_data"``.
+    :type kind: str
+    :returns: A JSON body with ``status`` ``"queued"``, the ``task_id``
+              and ``task`` kind, paired with HTTP ``202``; or an
+              ``error`` body paired with HTTP ``503`` if the task could
+              not be recorded or published.
+    :rtype: tuple[flask.Response, int]
+    """
+    task_id = str(uuid.uuid4())
+    try:
+        with psycopg.connect(os.getenv("DATABASE_URL")) as conn:
+            conn.execute(INSERT_TASK_SQL, (task_id, kind))
+    except psycopg.Error:
+        current_app.logger.exception("Failed to record %s task", kind)
+        return jsonify({"error": "task_create_failed"}), 503
 
     try:
-        publish_task("scrape_new_data", payload={})
-        return jsonify({"status":"queued", "task":"scrape_new_data"}), 202
+        publish_task(kind, payload={}, task_id=task_id)
     except (exceptions.AMQPConnectionError,
             exceptions.AMQPError,
             exceptions.ChannelClosedByBroker,
             exceptions.UnroutableError,
-            exceptions.StreamLostError):
-        current_app.logger.exception("Failed to publish recompute_analytics")
-        return jsonify({"error":"publish_failed"}), 503
+            exceptions.StreamLostError,
+            OSError) as e:  # e.g. broker hostname not resolvable
+        current_app.logger.exception("Failed to publish %s", kind)
+        try:
+            with psycopg.connect(os.getenv("DATABASE_URL")) as conn:
+                conn.execute(FAIL_TASK_SQL, (f"Publish failed: {type(e).__name__}", task_id))
+        except psycopg.Error:
+            current_app.logger.exception("Failed to mark task %s as failed", task_id)
+        return jsonify({"error": "publish_failed", "task_id": task_id}), 503
+
+    return jsonify({"status": "queued", "task_id": task_id, "task": kind}), 202
+
+@bp.route('/api/pull-data', methods=['POST'])
+def update_database():
+    """
+    Queue a scrape of new application entries from GradCafe.
+
+    Records a ``scrape_new_data`` task and publishes it for the worker.
+    The scrape itself runs asynchronously; poll
+    ``GET /api/tasks/<task_id>`` for its outcome.
+
+    **Route:**
+
+    +--------------------+--------+------------------------------------------+
+    | URL                | Method | Description                              |
+    +====================+========+==========================================+
+    | ``/api/pull-data`` | POST   | Queue a scrape task                      |
+    +--------------------+--------+------------------------------------------+
+
+    :returns: See :func:`_queue_task`.
+    :rtype: tuple[flask.Response, int]
+    """
+    return _queue_task("scrape_new_data")
 
 @bp.route('/api/analysis', methods=['POST'])
 def update_analysis():
     """
-    Return the rendered analysis HTML fragment as a JSON response.
+    Queue a refresh of the ``compiled_analytics`` materialized view.
 
-    Handles HTTP GET requests to ``/api/analysis``. If
-    ``UPDATING_LOCK`` is currently held (e.g. a database refresh
-    triggered by :func:`update_database` is in progress), returns an
-    immediate ``409 Conflict`` response without blocking. Otherwise,
-    acquires ``UPDATING_LOCK`` for the duration of the call, builds the
-    analysis HTML via :func:`get_analysis_html`, and returns it
-    wrapped in a JSON body.
-
-    This endpoint performs no database writes; it shares
-    ``UPDATING_LOCK`` with :func:`update_database` purely to avoid
-    rendering analysis HTML concurrently with an in-progress data
-    refresh (e.g. to avoid querying a table mid-insert).
+    Records a ``recompute_analytics`` task and publishes it for the
+    worker. Poll ``GET /api/tasks/<task_id>`` for its outcome, then fetch
+    the refreshed answers from ``GET /api/analysis``.
 
     **Route:**
 
-    +-------------------+--------+----------------------------------------+
-    | URL                | Method | Description                           |
-    +====================+========+=======================================+
-    | ``/api/analysis`` | GET    | Returns the rendered analysis HTML     |
-    +-------------------+--------+----------------------------------------+
+    +-------------------+--------+------------------------------------------+
+    | URL               | Method | Description                              |
+    +===================+========+==========================================+
+    | ``/api/analysis`` | POST   | Queue an analytics recompute task        |
+    +-------------------+--------+------------------------------------------+
 
-    :returns: On success, a dict with ``ok`` set to ``True``, ``status``
-              set to ``"Available"``, and ``content`` set to the HTML
-              fragment returned by :func:`get_analysis_html` (default
-              Flask ``200`` status). If a refresh is in progress, a
-              tuple of a dict with ``status`` set to ``"UPDATING"`` and
-              ``busy`` set to ``True``, paired with HTTP status ``409``.
-    :rtype: dict or tuple[dict, int]
+    :returns: See :func:`_queue_task`.
+    :rtype: tuple[flask.Response, int]
     """
+    return _queue_task("recompute_analytics")
+
+@bp.route('/api/analysis', methods=['GET'])
+def get_analysis():
+    """
+    Return the current analysis HTML fragment as JSON.
+
+    Lets the page swap in fresh answers after a recompute task succeeds,
+    without a full page reload. Performs no writes.
+
+    **Route:**
+
+    +-------------------+--------+------------------------------------------+
+    | URL               | Method | Description                              |
+    +===================+========+==========================================+
+    | ``/api/analysis`` | GET    | Return the rendered analysis HTML        |
+    +-------------------+--------+------------------------------------------+
+
+    :returns: A JSON body with ``content`` set to the HTML fragment from
+              :func:`get_analysis_html` and HTTP ``200``, or an ``error``
+              body with HTTP ``503`` if the database is unavailable.
+    :rtype: tuple[flask.Response, int]
+    """
+    try:
+        return jsonify({"content": get_analysis_html()}), 200
+    except psycopg.Error:
+        current_app.logger.exception("Failed to read analysis")
+        return jsonify({"error": "database_unavailable"}), 503
+
+@bp.route('/api/tasks/<task_id>', methods=['GET'])
+def get_task(task_id):
+    """
+    Return the status of a queued task.
+
+    The worker moves a task from ``queued`` to ``running`` and then to
+    ``succeeded`` or ``failed``. A task still ``queued`` or ``running``
+    after :data:`STALE_AFTER` is flagged ``stale``, which usually means
+    the worker died part-way through it.
+
+    **Route:**
+
+    +--------------------------+--------+-----------------------------------+
+    | URL                      | Method | Description                       |
+    +==========================+========+===================================+
+    | ``/api/tasks/<task_id>`` | GET    | Return one task's status          |
+    +--------------------------+--------+-----------------------------------+
+
+    :param task_id: The UUID returned when the task was queued.
+    :type task_id: str
+    :returns: A JSON body with ``task_id``, ``kind``, ``status``,
+              ``error``, ``stale``, ``created_at`` and ``updated_at`` and
+              HTTP ``200``; HTTP ``404`` if no such task exists; or HTTP
+              ``503`` if the database is unavailable.
+    :rtype: tuple[flask.Response, int]
+    """
+    try:
+        uuid.UUID(task_id)
+    except ValueError:
+        return jsonify({"error": "task_not_found"}), 404
 
     try:
-        publish_task("recompute_analytics", payload={})
-        return jsonify({"status":"queued","task":"recompute_analytics"}), 202
-    except (exceptions.AMQPConnectionError,
-            exceptions.AMQPError,
-            exceptions.ChannelClosedByBroker,
-            exceptions.UnroutableError,
-            exceptions.StreamLostError):
-        current_app.logger.exception("Failed to publish recompute_analytics")
-        return jsonify({"error":"publish_failed"}), 503
+        with psycopg.connect(os.getenv("DATABASE_URL"), row_factory=dict_row) as conn:
+            task = conn.execute(SELECT_TASK_SQL, (STALE_AFTER, task_id)).fetchone()
+    except psycopg.Error:
+        current_app.logger.exception("Failed to read task %s", task_id)
+        return jsonify({"error": "database_unavailable"}), 503
+
+    if task is None:
+        return jsonify({"error": "task_not_found"}), 404
+    task["created_at"] = task["created_at"].isoformat()
+    task["updated_at"] = task["updated_at"].isoformat()
+    return jsonify(task), 200

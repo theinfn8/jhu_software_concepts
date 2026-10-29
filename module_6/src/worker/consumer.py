@@ -52,6 +52,7 @@ acknowledged without requeue, and the error is logged to stdout.
 
 import json
 import os
+import uuid
 from datetime import datetime
 
 import pika
@@ -63,6 +64,8 @@ from etl.scrape import scrape_data
 EXCHANGE = "tasks"
 QUEUE = "tasks_q"
 ROUTING_KEY = "tasks"
+
+TASK_STATUS_SQL = "UPDATE tasks SET status = %s, error = %s, updated_at = NOW() WHERE task_id = %s;"
 
 def _create_tuples_list(scraped_data):
     """
@@ -266,16 +269,76 @@ def handle_recompute_analytics(conn, _payload):
         cur.execute(mv_refresh_sql)
         print("Materialized View Updated")
 
+def _set_task_status(task_id, status, error=None):
+    """
+    Record a task's status in the ``tasks`` table on its own connection.
+
+    Uses a separate short-lived connection so the update commits
+    immediately and survives a rollback of the task's own transaction.
+    Failures are logged rather than raised, so a status write can never
+    stop the consumer. Messages without a ``task_id`` are skipped.
+
+    :param task_id: The task's UUID, or ``None`` if the message had none.
+    :type task_id: str | None
+    :param status: One of ``running``, ``succeeded`` or ``failed``.
+    :type status: str
+    :param error: Error text to store with a ``failed`` status.
+    :type error: str | None
+    :returns: None
+    :rtype: None
+    """
+    if task_id is None:
+        return
+    try:
+        with psycopg.connect(os.getenv("DATABASE_URL")) as conn:
+            conn.execute(TASK_STATUS_SQL, (status, error, task_id))
+    except psycopg.Error as e:
+        print(f"Could not mark task {task_id} as {status}: {e}")
+
+def _reject(ch, method, task_id, error):
+    """
+    Mark a task failed, log the error, and nack its message without requeue.
+
+    :param ch: The pika channel the message was delivered on.
+    :type ch: pika.channel.Channel
+    :param method: Delivery metadata holding the ``delivery_tag``.
+    :type method: pika.spec.Basic.Deliver
+    :param task_id: The task's UUID, or ``None`` if the message had none.
+    :type task_id: str | None
+    :param error: Description of the failure, logged and stored on the task.
+    :type error: str
+    :returns: None
+    :rtype: None
+    """
+    print(error)
+    _set_task_status(task_id, "failed", error)
+    ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
+
+TASK_HANDLERS = {
+    "scrape_new_data": handle_scrape_new_data,
+    "recompute_analytics": handle_recompute_analytics,
+}
+
 def received_message(ch, method, _properties, body):
     """
     AMQP message callback — decode, dispatch, and acknowledge each task.
 
     Invoked by pika for every message delivered from ``tasks_q``. Decodes
-    the JSON body, opens a psycopg3 database connection, and dispatches to
-    :func:`handle_scrape_new_data` or :func:`handle_recompute_analytics`
-    based on the ``kind`` field. Sends a ``basic_ack`` on success or a
-    ``basic_nack`` (without requeue) on any database error, logging the
-    failure to stdout.
+    the JSON body, looks up the handler for its ``kind`` in
+    ``TASK_HANDLERS``, opens a psycopg3 database connection, and runs the
+    handler inside a single transaction. Sends a ``basic_ack`` only after
+    the transaction commits.
+
+    If the message carries a ``task_id``, the matching ``tasks`` row is
+    set to ``running`` before the handler starts, to ``succeeded`` in the
+    handler's own transaction, and to ``failed`` (with the error text) on
+    any failure.
+
+    Malformed messages (invalid JSON, missing or unknown ``kind``) and any
+    handler failure — database errors, scrape HTTP errors, or anything
+    else — are rolled back, logged to stdout, and ``basic_nack``-ed
+    without requeue. No exception escapes this callback, so a failed task
+    never stops the consumer or blocks later messages in the queue.
 
     :param ch: The pika channel on which the message was delivered. Used
         to send ``basic_ack`` or ``basic_nack``.
@@ -291,40 +354,49 @@ def received_message(ch, method, _properties, body):
     :returns: None
     :rtype: None
     """
-    message = json.loads(body)
     print("Message received from RabbitMQ")
+    # Reject malformed or unknown messages up front; requeueing would never fix them
+    task_id = None
+    try:
+        message = json.loads(body)
+        task_id = message.get("task_id")
+        if task_id is not None:
+            task_id = str(uuid.UUID(task_id))
+        kind = message["kind"]
+        handler = TASK_HANDLERS[kind]
+        payload = message.get("payload") or {}
+    except (ValueError, KeyError, TypeError, AttributeError) as e:
+        _reject(ch, method, task_id,
+                f"Malformed or unknown task discarded: {type(e).__name__}: {e}")
+        return
+
+    _set_task_status(task_id, "running")
+    # Leaving the connection block commits on success and rolls back on any
+    # exception, so the message is only acked after a successful commit. The
+    # succeeded status is written in the same transaction as the task's work.
     try:
         with psycopg.connect(os.getenv("DATABASE_URL"), row_factory=dict_row) as conn:
-            if message["kind"] == 'scrape_new_data':
-                handle_scrape_new_data(conn, message["payload"])
-            elif message["kind"] == "recompute_analytics":
-                handle_recompute_analytics(conn, message["payload"])
+            handler(conn, payload)
+            if task_id is not None:
+                conn.execute(TASK_STATUS_SQL, ("succeeded", None, task_id))
         ch.basic_ack(delivery_tag=method.delivery_tag)
+        print(f"Task {kind} committed and acknowledged")
     except errors.UniqueViolation as e:
-        conn.rollback()
-        ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
-        print(f"Duplicate record found during bulk insert: {e.diag.message_detail}")
+        _reject(ch, method, task_id,
+                f"Duplicate record found during bulk insert: {e.diag.message_detail}")
     except errors.NotNullViolation as e:
-        conn.rollback()
-        ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
-        print(f"Null value in non-nullable column: {e.diag.column_name}")
+        _reject(ch, method, task_id, f"Null value in non-nullable column: {e.diag.column_name}")
     except errors.CheckViolation as e:
-        conn.rollback()
-        ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
-        print(f"Check constraint violated: {e.diag.constraint_name}")
+        _reject(ch, method, task_id, f"Check constraint violated: {e.diag.constraint_name}")
     except errors.UndefinedTable:
-        ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
-        print("Table does not exist")
+        _reject(ch, method, task_id, "Table does not exist")
     except psycopg.OperationalError as e:
-        ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
-        print(f"Database connection error during bulk insert: {e}")
+        _reject(ch, method, task_id, f"Database connection error: {e}")
     except psycopg.Error as e:
-        conn.rollback()
-        ch.basic_nack(delivery_tag=method.delivery_tag, requeue=False)
-        print(f"Unexpected database error during bulk insert: {e}")
-
-    finally:
-        conn.close()
+        _reject(ch, method, task_id, f"Unexpected database error: {e}")
+    # Any other failure (e.g. scrape HTTP errors) must not kill the consumer
+    except Exception as e:  # pylint: disable=broad-exception-caught
+        _reject(ch, method, task_id, f"Task {kind} failed: {type(e).__name__}: {e}")
 
 if __name__=='__main__':
     print("Connecting to RabbitMQ")

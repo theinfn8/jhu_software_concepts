@@ -318,6 +318,20 @@ GRANT SELECT, INSERT ON public.applicants TO {user1};
 GRANT SELECT, INSERT, UPDATE ON public.ingestion_watermarks TO {user2};
 GRANT SELECT ON public.compiled_analytics TO {user3};
 GRANT EXECUTE ON FUNCTION public.refresh_compiled_analytics() TO {user4};
+GRANT SELECT, INSERT, UPDATE ON public.tasks TO {user5};
+"""
+
+# Mirrors the tasks table in init.sql so databases created before it existed get it too
+CREATE_TASKS_SQL = """
+CREATE TABLE IF NOT EXISTS public.tasks (
+    task_id uuid PRIMARY KEY,
+    kind text NOT NULL,
+    status text NOT NULL DEFAULT 'queued',
+    error text,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    CONSTRAINT tasks_status_check CHECK (status IN ('queued', 'running', 'succeeded', 'failed'))
+);
 """
 
 MV_REFRESH_SQL = "REFRESH MATERIALIZED VIEW compiled_analytics;"
@@ -406,6 +420,11 @@ if __name__=='__main__':
                     print("Materialized View Created")
                 db_conn.commit()
 
+                # Create the task status table if not present
+                db_cur.execute(CREATE_TASKS_SQL)
+                db_conn.commit()
+                print("Tasks Table Ready")
+
                 # Check for regular user and insert if not present
                 user_account = os.getenv("DB_USER")
                 user_pass = os.getenv("USER_PASS")
@@ -419,7 +438,8 @@ if __name__=='__main__':
                     user1=sql.Identifier(user_account),
                     user2=sql.Identifier(user_account),
                     user3=sql.Identifier(user_account),
-                    user4=sql.Identifier(user_account),))
+                    user4=sql.Identifier(user_account),
+                    user5=sql.Identifier(user_account),))
                 db_conn.commit()
                 print("Reduced Privilege User Added")
 

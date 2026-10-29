@@ -87,7 +87,8 @@ def _open_channel():
     ch.queue_bind(exchange=EXCHANGE, queue=QUEUE, routing_key=ROUTING_KEY)
     return conn, ch
 
-def publish_task(kind: str, payload: dict | None = None, headers: dict | None = None) -> None:
+def publish_task(kind: str, payload: dict | None = None, headers: dict | None = None,
+                 task_id: str | None = None) -> None:
     """
     Publish a persistent task message to the RabbitMQ task exchange.
 
@@ -103,6 +104,8 @@ def publish_task(kind: str, payload: dict | None = None, headers: dict | None = 
     | Field       | Type                      | Description                   |
     +=============+===========================+===============================+
     | ``kind``    | ``str``                   | Task type identifier          |
+    +-------------+---------------------------+-------------------------------+
+    | ``task_id`` | ``str`` (UUID) or ``None``| Row in the ``tasks`` table    |
     +-------------+---------------------------+-------------------------------+
     | ``ts``      | ``str`` (ISO-8601 UTC)    | Publish timestamp             |
     +-------------+---------------------------+-------------------------------+
@@ -129,6 +132,9 @@ def publish_task(kind: str, payload: dict | None = None, headers: dict | None = 
         :class:`pika.BasicProperties`. Defaults to an empty dict if not
         supplied.
     :type headers: dict | None
+    :param task_id: Optional ID of the ``tasks`` row tracking this message.
+        The worker updates that row's status as it processes the task.
+    :type task_id: str | None
     :raises pika.exceptions.AMQPConnectionError: If the broker is
         unreachable.
     :raises pika.exceptions.UnroutableError: If the message cannot be
@@ -145,6 +151,7 @@ def publish_task(kind: str, payload: dict | None = None, headers: dict | None = 
         publish_task("recompute_analytics", payload={"force": True})
     """
     body_data = {"kind": kind,
+                 "task_id": task_id,
                  "ts": datetime.now(timezone.utc).isoformat(),
                  "payload": payload or {}}
     body = json.dumps(body_data).encode("utf-8")

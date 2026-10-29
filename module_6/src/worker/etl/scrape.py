@@ -19,6 +19,8 @@ marker) or once the underlying source is exhausted.
 +===========================+============================================+
 | :func:`_fetch_page`       | Fetch a single paginated page of results  |
 +---------------------------+------------------------------------------+
+| :func:`_next_page_url`    | Find the cursor URL of the next page      |
++---------------------------+------------------------------------------+
 | :func:`scrape_data`       | Orchestrate pagination, parsing, cleaning |
 +---------------------------+------------------------------------------+
 | :func:`load_data`         | Load a JSON file from disk                |
@@ -40,12 +42,13 @@ marker) or once the underlying source is exhausted.
 **Module-level constants:**
 
 ``BASE_PAGE_URL``
-    Base URL stem (``"https://www.thegradcafe.com/survey?page="``) onto
-    which a page number is appended by :func:`_fetch_page`.
+    URL of the first survey page in newest-first order
+    (``"https://www.thegradcafe.com/survey?sort=newest"``). Later pages
+    are reached by following the cursor link found on each page.
 
-``BASE_PAGE_URL_SORT_ORDER``
-    Query-string suffix (``"&sort=newest"``) appended after the page
-    number to request results in newest-first order.
+``NEXT_LINK_TEXT``
+    Visible text (``"Next"``) of the pagination link whose ``href``
+    carries the cursor for the following page.
 
 ``BASE_URL``
     The root site URL (``"https://www.thegradcafe.com"``). Not directly
@@ -101,8 +104,8 @@ from bs4 import BeautifulSoup
 
 from etl.clean import clean_data
 
-BASE_PAGE_URL = 'https://www.thegradcafe.com/survey?page='
-BASE_PAGE_URL_SORT_ORDER = '&sort=newest'
+BASE_PAGE_URL = 'https://www.thegradcafe.com/survey?sort=newest'
+NEXT_LINK_TEXT = 'Next'
 BASE_URL = 'https://www.thegradcafe.com'
 http = PoolManager()
 
@@ -111,24 +114,26 @@ SOURCE_COLS = [
         "html"
     ]
 
-def _fetch_page(page_num):
+def _fetch_page(url):
     """
     Fetch a single paginated results page from GradCafe with a polite
     random delay.
 
-    Constructs the target URL by interpolating ``page_num`` between the
-    module-level ``BASE_PAGE_URL`` and ``BASE_PAGE_URL_SORT_ORDER`` constants,
-    issues an HTTP GET request via the module-level ``http`` pool
-    manager, and returns the raw response body and status code.
+    Issues an HTTP GET request for ``url`` via the module-level ``http``
+    pool manager and returns the raw response body.
 
     A random delay of 0–5 seconds is applied before each request to
     avoid overwhelming the source server.
 
-    **URL construction:**
+    **URL format:**
+
+    GradCafe uses cursor pagination. The first page is
+    ``BASE_PAGE_URL``; each later page URL is taken from the previous
+    page's "Next" link by :func:`_next_page_url`:
 
     .. code-block:: text
 
-        https://www.thegradcafe.com/survey?page={page_num}&sort=newest
+        https://www.thegradcafe.com/survey?sort=newest&cursor={cursor}
 
     **HTTP status handling:**
 
@@ -147,11 +152,10 @@ def _fetch_page(page_num):
     |        |                   | ``(response.data, status)``                   |
     +--------+-------------------+-----------------------------------------------+
 
-    :param page_num: The page number to append to
-                    ``https://www.thegradcafe.com/survey?page=`` when
-                    constructing the request URL. Page numbering begins
-                    at ``1``.
-    :type page_num: int
+    :param url: Full URL of the survey page to fetch, either
+                ``BASE_PAGE_URL`` or a cursor URL returned by
+                :func:`_next_page_url`.
+    :type url: str
     :returns: A two-element tuple of ``(response.data, status)`` where
               ``response.data`` is the raw response body as bytes and
               ``status`` is the integer HTTP status code. Returned for
@@ -191,7 +195,6 @@ def _fetch_page(page_num):
     # Build in wait time for politeness
     time.sleep(random.randint(0,5))
 
-    url = BASE_PAGE_URL + str(page_num) + BASE_PAGE_URL_SORT_ORDER
     try:
         response = http.request('GET', url)
         status = response.status
@@ -217,13 +220,35 @@ def _fetch_page(page_num):
     except exceptions.HTTPError as e:
         raise ConnectionError(f"HTTP error from {url}: {e}") from e
 
+def _next_page_url(parsed_page):
+    """
+    Return the cursor URL of the next survey page, if there is one.
+
+    GradCafe's pagination renders both a "Previous" and a "Next" link
+    carrying a ``cursor`` query parameter, so the link is selected by its
+    visible text rather than by the presence of ``cursor=`` alone. The
+    ``href`` already includes ``sort=newest``, so it is used as-is.
+
+    :param parsed_page: A parsed GradCafe survey page.
+    :type parsed_page: bs4.BeautifulSoup
+    :returns: The absolute URL of the next page, or ``None`` on the last
+              page (no "Next" link present).
+    :rtype: str or None
+    """
+    for link in parsed_page.find_all("a", href=True):
+        if "cursor=" in link["href"] and link.get_text(strip=True) == NEXT_LINK_TEXT:
+            return link["href"]
+    return None
+
 def scrape_data(last_id_fetched):
     """
     Scrape and parse graduate application entries from GradCafe, stopping
     when previously fetched records are reached or pages are exhausted.
 
     Iterates through paginated GradCafe survey results page by page,
-    fetching each via :func:`_fetch_page`, parsing the HTML table body
+    starting at ``BASE_PAGE_URL`` and following each page's cursor link
+    (found by :func:`_next_page_url`), fetching each via
+    :func:`_fetch_page`, parsing the HTML table body
     with BeautifulSoup, and cleaning each page's rows via
     :func:`clean.clean_data`. Accumulates cleaned records across pages
     until one of the following termination conditions is met:
@@ -241,8 +266,8 @@ def scrape_data(last_id_fetched):
     | A page yields fewer than 20 records      | Stops pagination; returns |
     | (final or near-final page reached)       | accumulated data          |
     +------------------------------------------+---------------------------+
-    | All pages exhausted without hitting      | Returns accumulated data  |
-    | any other termination condition          |                           |
+    | The page has no "Next" cursor link       | Stops pagination; returns |
+    | (last page reached)                      | accumulated data          |
     +------------------------------------------+---------------------------+
 
     :param last_id_fetched: The integer ID of the most recently scraped
@@ -289,14 +314,17 @@ def scrape_data(last_id_fetched):
 
     .. seealso::
         :func:`_fetch_page` — fetches and returns raw page content for
-        a given page number.
+        a given page URL.
+
+        :func:`_next_page_url` — extracts the cursor URL of the
+        following page.
 
         :func:`clean.clean_data` — parses raw ``<tr>`` elements into
         cleaned record dictionaries and detects the ``last_id_fetched``
         boundary.
     """
 
-    current_page = 1
+    page_url = BASE_PAGE_URL
 
     cleaned_data = []
 
@@ -304,7 +332,7 @@ def scrape_data(last_id_fetched):
 
     while fetch_more_entries:
         try:
-            content = _fetch_page(current_page)
+            content = _fetch_page(page_url)
         except Exception as e:
             raise e
 
@@ -321,7 +349,9 @@ def scrape_data(last_id_fetched):
                 fetch_more_entries = False
             cleaned_data = cleaned_data + new_cleaned_data
 
-        current_page += 1
+        page_url = _next_page_url(parsed_page)
+        if page_url is None:
+            fetch_more_entries = False
 
     if len(cleaned_data) == 0:
         return None

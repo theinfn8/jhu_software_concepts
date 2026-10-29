@@ -1,28 +1,4 @@
 --
--- Roles
---
-
---
--- User Configurations
---
-
--- Create user if it doesn't exist
-DO $$
-BEGIN
-    IF NOT EXISTS (SELECT 1 FROM pg_roles WHERE rolname = 'grad_user') THEN
-        CREATE USER grad_user
-            WITH PASSWORD 'grad_user_pass'
-            NOSUPERUSER     -- cannot perform superuser operations
-            NOCREATEDB      -- cannot create databases
-            NOCREATEROLE    -- cannot create roles or users
-            NOINHERIT       -- does not inherit privileges of roles it is a member of
-            LOGIN;          -- can log in
-    END IF;
-END $$;
-
-
-
---
 -- Name: applicants; Type: TABLE; Schema: public; Owner: grad_admin
 --
 
@@ -70,3 +46,24 @@ ALTER TABLE ONLY public.applicants
 
 ALTER TABLE ONLY public.ingestion_watermarks
     ADD CONSTRAINT ingestion_watermarks_pkey PRIMARY KEY (source);
+
+--
+-- Name: tasks; Type: TABLE; Schema: public; Owner: grad_admin
+--
+
+CREATE TABLE public.tasks (
+    task_id uuid NOT NULL,
+    kind text NOT NULL,
+    status text DEFAULT 'queued' NOT NULL,
+    error text,
+    created_at timestamp with time zone DEFAULT now(),
+    updated_at timestamp with time zone DEFAULT now(),
+    CONSTRAINT tasks_status_check CHECK (status IN ('queued', 'running', 'succeeded', 'failed'))
+);
+
+--
+-- Name: tasks tasks_pkey; Type: CONSTRAINT; Schema: public; Owner: grad_admin
+--
+
+ALTER TABLE ONLY public.tasks
+    ADD CONSTRAINT tasks_pkey PRIMARY KEY (task_id);

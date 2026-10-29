@@ -11,3 +11,12 @@ sql/
 .env.worker
 pgdata
 saved_model/
+
+# Claude Code
+.claude/
+CLAUDE.md
+CLAUDE.local.md
+
+# Grader feedback and assignment handouts
+feedback.txt
+*Assignment*.pdf
