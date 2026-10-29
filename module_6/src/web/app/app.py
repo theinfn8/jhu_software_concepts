@@ -20,6 +20,8 @@ suites to obtain an app instance.
 
 * :mod:`flask` -- third-party, supplies the :class:`~flask.Flask`
   application class.
+* :mod:`werkzeug` -- third-party (installed with Flask), supplies
+  :class:`~werkzeug.middleware.proxy_fix.ProxyFix`.
 * :mod:`src.routes` -- local package, supplies ``bp``, the
   :class:`~flask.Blueprint` registered on the created app.
 
@@ -34,6 +36,7 @@ suites to obtain an app instance.
 """
 
 from flask import Flask
+from werkzeug.middleware.proxy_fix import ProxyFix
 from .routes import bp
 
 def create_app() -> Flask:
@@ -42,6 +45,9 @@ def create_app() -> Flask:
 
     Initializes a Flask app instance with static and template folders,
     registers the main blueprint, and loads configuration from ``config.py``.
+    The WSGI app is wrapped in :class:`~werkzeug.middleware.proxy_fix.ProxyFix`
+    so the app can be served under a reverse proxy path such as
+    ``/deployanywhere``.
 
     :param test_config: Optional configuration mapping to override the default
                         configuration. If ``None``, the app loads from
@@ -56,5 +62,9 @@ def create_app() -> Flask:
     app.register_blueprint(bp)
 
     app.config.from_pyfile('config.py', silent=True)
+
+    # Trust one reverse proxy's X-Forwarded-* headers so url_for honours the
+    # proxy's path prefix and scheme; without the headers nothing changes
+    app.wsgi_app = ProxyFix(app.wsgi_app, x_for=1, x_proto=1, x_host=1, x_prefix=1)
 
     return app
