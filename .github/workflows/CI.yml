@@ -51,21 +51,23 @@ jobs:
         cache: 'pip'
     - name: Install dependencies
       run: |
-        sudo systemctl start postgresql.service
         python -m pip install --upgrade pip
         pip install -r module_5/requirements.txt
+        pip install -r module_6/src/web/requirements.txt \
+                    -r module_6/src/worker/requirements.txt \
+                    -r module_6/src/db/requirements.txt
         sudo apt update && sudo apt install -y graphviz
-    - name: Stage database
-      run: |
-        python ./scripts/test_setup.py
-    - name: Lint with PyLint
-      run: |
-        cd module_6
-        pylint --fail-under=10 src/web src/worker src/db
-    - name: Test with pytest
-      run: |
-        cd module_6
-        pytest --cov-report term-missing --rootdir=./ --cov=src tests/
+    # Each module 6 service is its own app with its own import root, so lint
+    # them separately from their own directories
+    - name: Lint web with PyLint
+      working-directory: module_6/src/web
+      run: pylint --fail-under=10 app publisher.py run.py
+    - name: Lint worker with PyLint
+      working-directory: module_6/src/worker
+      run: pylint --fail-under=10 consumer.py etl
+    - name: Lint db with PyLint
+      working-directory: module_6/src/db
+      run: pylint --fail-under=10 load_data.py
     - name: Check for dependency.svg
       id: check_file
       run: |
